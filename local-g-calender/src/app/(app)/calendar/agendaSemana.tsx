@@ -17,13 +17,18 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import DialogNovoEvento from './dialogNovoEvento';
-
-type Visita = {
-  data: string; // formato: yyyy-MM-dd
-  hora: string;
-  cliente: string;
-  servico: string;
-};
+import { useQuery } from '@tanstack/react-query';
+import { apiBuscarVisitasSemana } from './api/apiBuscarVisitas';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { VisitaDetalhesForm } from './visitaDetalhesForm';
+import { VisitaComAnexoPayload } from '@/types/VisitaComPayload';
+import { DialogDescription } from '@radix-ui/react-dialog';
 
 export default function AgendaSemana() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -31,20 +36,18 @@ export default function AgendaSemana() {
     startOfWeek(new Date(), { weekStartsOn: 0 })
   );
 
-  // Simulando visitas criadas manualmente
-  const [visitas] = useState<Visita[]>([
-    {
-      data: format(new Date(), 'yyyy-MM-dd'),
-      hora: '10:00',
-      cliente: 'João da Silva',
-      servico: 'Manutenção preventiva',
-    },
-  ]);
-
   const days = eachDayOfInterval({
     start: currentWeekStart,
     end: addWeeks(currentWeekStart, 1),
   }).slice(0, 7);
+
+  const inicioSemana = format(currentWeekStart, 'yyyy-MM-dd');
+  const fimSemana = format(addWeeks(currentWeekStart, 1), 'yyyy-MM-dd');
+
+  const { data: visitas = [] } = useQuery<VisitaComAnexoPayload[]>({
+    queryKey: ['visitas', inicioSemana, fimSemana],
+    queryFn: () => apiBuscarVisitasSemana(inicioSemana, fimSemana),
+  });
 
   const handleDateChange = (date: Date | undefined) => {
     if (date) {
@@ -90,7 +93,9 @@ export default function AgendaSemana() {
       <Accordion type='single' collapsible className='w-full overflow-y-auto'>
         {days.map((day, index) => {
           const dataStr = format(day, 'yyyy-MM-dd');
-          const visitasDoDia = visitas.filter((v) => v.data === dataStr);
+          const visitasDoDia = visitas.filter(
+            (v) => format(new Date(v.data_visita), 'yyyy-MM-dd') === dataStr
+          );
 
           return (
             <AccordionItem key={index} value={`dia-${index}`}>
@@ -112,18 +117,34 @@ export default function AgendaSemana() {
                   </p>
                 ) : (
                   <ul className='pl-4 space-y-2'>
-                    {visitasDoDia.map((visita, i) => (
-                      <li key={i} className='border rounded p-2'>
-                        <p>
-                          <strong>Cliente:</strong> {visita.cliente}
-                        </p>
-                        <p>
-                          <strong>Horário:</strong> {visita.hora}
-                        </p>
-                        <p>
-                          <strong>Serviço:</strong> {visita.servico}
-                        </p>
-                      </li>
+                    {visitasDoDia.map((visita) => (
+                      <Dialog key={visita.id}>
+                        <DialogTrigger asChild>
+                          <li className='border rounded p-2 cursor-pointer hover:bg-gray-50'>
+                            <p>
+                              <strong>Horário:</strong>{' '}
+                              {format(new Date(visita.data_visita), 'HH:mm')}
+                            </p>
+                            <p>
+                              <strong>Status:</strong> {visita.status}
+                            </p>
+                            <p>
+                              <strong>Valor:</strong> R$ {visita.preco}
+                            </p>
+                          </li>
+                        </DialogTrigger>
+
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Detalhes da Visita</DialogTitle>
+                            <DialogDescription className='text-zinc-500  border-zinc-500  border-b-[1px]'>
+                              {visita.descricao}
+                            </DialogDescription>
+                          </DialogHeader>
+
+                          <VisitaDetalhesForm visita={visita} />
+                        </DialogContent>
+                      </Dialog>
                     ))}
                   </ul>
                 )}
