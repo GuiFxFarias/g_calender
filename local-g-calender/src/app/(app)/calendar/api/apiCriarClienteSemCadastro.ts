@@ -1,5 +1,6 @@
 export async function apiCriarClienteTemporario(
-  nome: string
+  nome?: string,
+  telefone?: string
 ): Promise<{ id: number }> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/clienteSemCadastro`,
@@ -8,7 +9,7 @@ export async function apiCriarClienteTemporario(
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ nome }),
+      body: JSON.stringify({ nome, telefone }),
     }
   );
 
