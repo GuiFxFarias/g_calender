@@ -49,13 +49,13 @@ export default function RootLayout({
   // Componente de navegação reutilizável
   const NavigationLinks = ({ className = '', closeDrawer = () => {} }) => (
     <nav className={`space-y-4 ${className}`}>
-      <Link href='/dashboard' className='w-full block' onClick={closeDrawer}>
-        <Button className='w-full justify-start' variant='ghost'>
+      <Link href='/calendar' className='w-full block ' onClick={closeDrawer}>
+        <Button className='w-full justify-start cursor-pointer' variant='ghost'>
           Calendário
         </Button>
       </Link>
-      <Link href='/clientes' className='w-full block' onClick={closeDrawer}>
-        <Button className='w-full justify-start' variant='ghost'>
+      <Link href='/clientes' className='w-full block ' onClick={closeDrawer}>
+        <Button className='w-full justify-start cursor-pointer' variant='ghost'>
           Clientes
         </Button>
       </Link>

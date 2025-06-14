@@ -16,9 +16,10 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'react-hot-toast';
 import { VisitaComAnexoPayload } from '@/types/VisitaComPayload';
-import { Paperclip } from 'lucide-react';
+import { Download, Paperclip } from 'lucide-react';
 import { apiEditarVisita } from './api/apiEditarVisita';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { getAnexosPorVisitaId } from './api/apiBuscarAnexoPorVisita';
 
 const schema = z.object({
   preco: z.coerce.number().min(0),
@@ -48,6 +49,11 @@ export function VisitaDetalhesForm({
       status: visita.status,
       novosArquivos: undefined,
     },
+  });
+
+  const { data: anexos } = useQuery({
+    queryKey: ['anexos', visita.id],
+    queryFn: () => getAnexosPorVisitaId(visita.id),
   });
 
   const queryClient = useQueryClient();
@@ -133,6 +139,31 @@ export function VisitaDetalhesForm({
           {arquivosSelecionados.map((file, index) => (
             <li key={index}>{file.name}</li>
           ))}
+        </ul>
+        <ul className='space-y-2 mt-2'>
+          {anexos?.map((anexo) => {
+            const url = anexo.arquivo_url;
+            const nomeArquivo = url.split('/').pop(); // extrai apenas o nome do arquivo
+
+            return (
+              <li
+                key={anexo.id}
+                className='flex items-center justify-between gap-2 border border-zinc-200 rounded px-3 py-2'
+              >
+                <span className='text-sm text-zinc-700 truncate'>
+                  {nomeArquivo}
+                </span>
+
+                <a
+                  href={`http://localhost:3001/baixar/${nomeArquivo}`}
+                  className='flex items-center gap-1 text-blue-600 hover:underline text-sm'
+                >
+                  <Download className='w-4 h-4' />
+                  Baixar
+                </a>
+              </li>
+            );
+          })}
         </ul>
       </div>
 

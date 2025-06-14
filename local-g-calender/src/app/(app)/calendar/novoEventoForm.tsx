@@ -75,7 +75,7 @@ export default function EventoForm() {
         data_visita: `${values.data_visita}T${values.hora_visita}`,
         preco: values.preco,
         descricao: values.descricao,
-        status: values.status,
+        status: 'pendente_visita',
         anexos: values.anexos,
       });
 
@@ -213,7 +213,7 @@ export default function EventoForm() {
           )}
         />
 
-        <Button type='submit' className='w-full'>
+        <Button type='submit' className='w-full cursor-pointer'>
           Salvar Visita
         </Button>
       </form>
