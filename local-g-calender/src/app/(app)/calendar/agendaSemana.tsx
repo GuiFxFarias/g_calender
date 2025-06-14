@@ -110,7 +110,8 @@ export default function AgendaSemana() {
               <AccordionTrigger className='px-4 py-3 hover:bg-zinc-50 transition-colors'>
                 <div className='flex justify-between items-center w-full text-left'>
                   <span className='font-semibold text-zinc-800'>
-                    {format(day, 'EEEE', { locale: ptBR })} –{' '}
+                    {format(day, 'EEEE', { locale: ptBR })[0].toUpperCase()}
+                    {format(day, 'EEEE', { locale: ptBR }).slice(1)} -{' '}
                     {format(day, 'dd/MM/yyyy')}
                   </span>
                   <span className='text-sm text-zinc-500'>

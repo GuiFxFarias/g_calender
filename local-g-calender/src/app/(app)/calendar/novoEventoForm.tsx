@@ -28,10 +28,14 @@ import {
 import { apiListarClientes, Cliente } from './api/apiListarClientes';
 import { useQueryClient } from '@tanstack/react-query';
 import { Label } from '@/components/ui/label';
+// import { Paperclip } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { apiCriarClienteTemporario } from './api/apiCriarClienteSemCadastro';
 import { Paperclip } from 'lucide-react';
 
 const formSchema = z.object({
-  cliente_id: z.coerce.number().min(1, 'Selecione o cliente'),
+  cliente_id: z.coerce.number().min(0, 'Selecione o cliente').optional(),
+  nome_cliente: z.string().optional(),
   data_visita: z.string().min(1),
   hora_visita: z.string().min(1),
   preco: z.coerce.number().min(0),
@@ -54,29 +58,48 @@ export default function EventoForm() {
       .then(setClientes)
       .catch(() => toast.error('Erro ao carregar clientes'));
   }, []);
+  const [clienteSemCadastro, setClienteSemCadastro] = useState<boolean>();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       cliente_id: 0,
+      nome_cliente: '',
       data_visita: '',
       hora_visita: '',
       preco: 0,
       descricao: '',
+      status: 'pendente_visita',
     },
   });
 
   const queryClient = useQueryClient();
 
   const onSubmit = async (values: FormValues) => {
+    let clienteIdFinal = values.cliente_id;
+
+    console.log(values);
+
+    if (clienteSemCadastro && values.nome_cliente) {
+      try {
+        const novoCliente = await apiCriarClienteTemporario(
+          values.nome_cliente
+        );
+        clienteIdFinal = novoCliente.id;
+      } catch {
+        toast.error('Erro ao criar cliente temporário');
+        return;
+      }
+    }
+
     try {
       await apiCriarVisitaComAnexo({
-        cliente_id: values.cliente_id,
+        cliente_id: clienteIdFinal,
         data_visita: `${values.data_visita}T${values.hora_visita}`,
         preco: values.preco,
         descricao: values.descricao,
-        status: 'pendente_visita',
-        anexos: values.anexos,
+        status: values.status,
+        // anexos: values.anexos,
       });
 
       toast.success('Visita criada com sucesso!');
@@ -90,33 +113,57 @@ export default function EventoForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-        <FormField
-          control={form.control}
-          name='cliente_id'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Cliente</FormLabel>
-              <Select
-                onValueChange={(value) => field.onChange(Number(value))}
-                value={field.value ? String(field.value) : ''}
-              >
+        <div className='flex space-x-2 justify-start items-center'>
+          <Checkbox
+            checked={clienteSemCadastro}
+            onCheckedChange={(checked) => setClienteSemCadastro(!!checked)}
+          />
+          <Label>O cliente não possui cadastro ainda</Label>
+        </div>
+
+        {!clienteSemCadastro ? (
+          <FormField
+            control={form.control}
+            name='cliente_id'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Cliente</FormLabel>
+                <Select
+                  onValueChange={(value) => field.onChange(Number(value))}
+                  value={field.value ? String(field.value) : ''}
+                >
+                  <FormControl>
+                    <SelectTrigger className='w-full'>
+                      <SelectValue placeholder='Selecione um cliente' />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {clientes.map((cliente) => (
+                      <SelectItem key={cliente.id} value={String(cliente.id)}>
+                        {cliente.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ) : (
+          <FormField
+            control={form.control}
+            name='nome_cliente'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nome do Cliente</FormLabel>
                 <FormControl>
-                  <SelectTrigger className='w-full'>
-                    <SelectValue placeholder='Selecione um cliente' />
-                  </SelectTrigger>
+                  <Input placeholder='Digite o nome do cliente' {...field} />
                 </FormControl>
-                <SelectContent>
-                  {clientes.map((cliente) => (
-                    <SelectItem key={cliente.id} value={String(cliente.id)}>
-                      {cliente.nome}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <div className='flex gap-4'>
           <FormField
@@ -194,7 +241,7 @@ export default function EventoForm() {
                       id='upload-arquivos'
                       type='file'
                       multiple
-                      {...field}
+                      onChange={(e) => field.onChange(e.target.files)}
                       className='absolute inset-0 opacity-0 cursor-pointer z-10'
                     />
                     <Button
