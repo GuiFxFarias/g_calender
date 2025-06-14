@@ -18,6 +18,7 @@ import { toast } from 'react-hot-toast';
 import { VisitaComAnexoPayload } from '@/types/VisitaComPayload';
 import { Paperclip } from 'lucide-react';
 import { apiEditarVisita } from './api/apiEditarVisita';
+import { useQueryClient } from '@tanstack/react-query';
 
 const schema = z.object({
   preco: z.coerce.number().min(0),
@@ -49,6 +50,8 @@ export function VisitaDetalhesForm({
     },
   });
 
+  const queryClient = useQueryClient();
+
   const onSubmit = async (values: FormData) => {
     try {
       setLoading(true);
@@ -61,6 +64,7 @@ export function VisitaDetalhesForm({
       });
 
       toast.success('Visita atualizada com sucesso!');
+      await queryClient.refetchQueries({ queryKey: ['visitas'] });
     } catch {
       toast.error('Erro ao atualizar visita');
     } finally {

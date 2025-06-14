@@ -60,7 +60,7 @@ export default function AgendaSemana() {
   const nextWeek = () => setCurrentWeekStart((prev) => addWeeks(prev, 1));
 
   return (
-    <div className='h-screen flex flex-col p-4 gap-4'>
+    <div className='h-screen flex flex-col p-4 gap-4 '>
       {/* Navegação */}
       <div className='flex justify-start items-center gap-2'>
         <Button variant='outline' onClick={previousWeek}>
@@ -90,7 +90,11 @@ export default function AgendaSemana() {
       </div>
 
       {/* Acordeon com dias e visitas */}
-      <Accordion type='single' collapsible className='w-full overflow-y-auto'>
+      <Accordion
+        type='single'
+        collapsible
+        className='w-full overflow-y-auto space-y-2 py-2'
+      >
         {days.map((day, index) => {
           const dataStr = format(day, 'yyyy-MM-dd');
           const visitasDoDia = visitas.filter(
@@ -98,37 +102,52 @@ export default function AgendaSemana() {
           );
 
           return (
-            <AccordionItem key={index} value={`dia-${index}`}>
-              <AccordionTrigger>
-                <div className='flex justify-between w-full text-left'>
-                  <span className='font-semibold'>
+            <AccordionItem
+              key={index}
+              value={`dia-${index}`}
+              className='border border-zinc-200 rounded-lg shadow-sm'
+            >
+              <AccordionTrigger className='px-4 py-3 hover:bg-zinc-50 transition-colors'>
+                <div className='flex justify-between items-center w-full text-left'>
+                  <span className='font-semibold text-zinc-800'>
                     {format(day, 'EEEE', { locale: ptBR })} –{' '}
                     {format(day, 'dd/MM/yyyy')}
                   </span>
-                  <span className='text-muted-foreground'>
+                  <span className='text-sm text-zinc-500'>
                     {visitasDoDia.length} visita(s)
                   </span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent>
+
+              <AccordionContent className='bg-white border-t border-zinc-200 px-4 py-3'>
                 {visitasDoDia.length === 0 ? (
-                  <p className='text-sm text-muted-foreground pl-2'>
+                  <p className='text-sm text-zinc-400'>
                     Nenhuma visita agendada.
                   </p>
                 ) : (
-                  <ul className='pl-4 space-y-2'>
+                  <ul className='space-y-3'>
                     {visitasDoDia.map((visita) => (
                       <Dialog key={visita.id}>
                         <DialogTrigger asChild>
-                          <li className='border rounded p-2 cursor-pointer hover:bg-gray-50'>
-                            <p>
-                              <strong>Horário:</strong>{' '}
-                              {format(new Date(visita.data_visita), 'HH:mm')}
-                            </p>
-                            <p>
-                              <strong>Status:</strong> {visita.status}
-                            </p>
-                            <p>
+                          <li className='border border-zinc-200 rounded-md p-3 hover:shadow-md transition cursor-pointer'>
+                            <div className='flex justify-between'>
+                              <p className='text-sm text-zinc-700'>
+                                <strong>Horário:</strong>{' '}
+                                {format(new Date(visita.data_visita), 'HH:mm')}
+                              </p>
+                              <span
+                                className={`px-2 py-0.5 text-xs rounded-full ${
+                                  visita.status === 'pendente_recebimento'
+                                    ? 'bg-yellow-100 text-yellow-700'
+                                    : visita.status === 'pago'
+                                    ? 'bg-green-100 text-green-700'
+                                    : 'bg-blue-100 text-blue-700'
+                                }`}
+                              >
+                                {visita.status}
+                              </span>
+                            </div>
+                            <p className='text-sm text-zinc-700 mt-1'>
                               <strong>Valor:</strong> R$ {visita.preco}
                             </p>
                           </li>
@@ -137,7 +156,7 @@ export default function AgendaSemana() {
                         <DialogContent>
                           <DialogHeader>
                             <DialogTitle>Detalhes da Visita</DialogTitle>
-                            <DialogDescription className='text-zinc-500  border-zinc-500  border-b-[1px]'>
+                            <DialogDescription className='text-sm text-zinc-500 border-b pb-2'>
                               {visita.descricao}
                             </DialogDescription>
                           </DialogHeader>

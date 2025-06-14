@@ -184,10 +184,11 @@ export default function EventoForm() {
           name='anexos'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Anexos</FormLabel>
               <FormControl>
                 <div>
-                  <Label htmlFor='upload-arquivos'>Anexos</Label>
+                  <Label htmlFor='upload-arquivos' className='mb-2'>
+                    Anexos
+                  </Label>
                   <div className='relative inline-block'>
                     <Input
                       id='upload-arquivos'
