@@ -100,16 +100,25 @@ export function VisitaDetalhesForm({
               }
               value={form.watch('status')}
             >
-              <SelectTrigger className='w-full'>
+              <SelectTrigger className='w-full cursor-pointer'>
                 <SelectValue placeholder='Selecione o status' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='pendente_visita'>Pendente Visita</SelectItem>
-                <SelectItem value='pendente_recebimento'>
+                <SelectItem className='cursor-pointer' value='pendente_visita'>
+                  Pendente Visita
+                </SelectItem>
+                <SelectItem
+                  className='cursor-pointer'
+                  value='pendente_recebimento'
+                >
                   Pendente Recebimento
                 </SelectItem>
-                <SelectItem value='pago'>Pago</SelectItem>
-                <SelectItem value='cancelado'>Cancelado</SelectItem>
+                <SelectItem className='cursor-pointer' value='pago'>
+                  Pago
+                </SelectItem>
+                <SelectItem className='cursor-pointer' value='cancelado'>
+                  Cancelado
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>

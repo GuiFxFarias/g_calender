@@ -19,16 +19,10 @@ import {
 import DialogNovoEvento from './dialogNovoEvento';
 import { useQuery } from '@tanstack/react-query';
 import { apiBuscarVisitasSemana } from './api/apiBuscarVisitas';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { VisitaDetalhesForm } from './visitaDetalhesForm';
+
 import { VisitaComAnexoPayload } from '@/types/VisitaComPayload';
-import { DialogDescription } from '@radix-ui/react-dialog';
+
+import VisitaDoDia from './dialogVisitaDoDia';
 
 export default function AgendaSemana() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -128,43 +122,7 @@ export default function AgendaSemana() {
                 ) : (
                   <ul className='space-y-3'>
                     {visitasDoDia.map((visita) => (
-                      <Dialog key={visita.id}>
-                        <DialogTrigger asChild>
-                          <li className='border border-zinc-200 rounded-md p-3 hover:shadow-md transition cursor-pointer'>
-                            <div className='flex justify-between'>
-                              <p className='text-sm text-zinc-700'>
-                                <strong>Horário:</strong>{' '}
-                                {format(new Date(visita.data_visita), 'HH:mm')}
-                              </p>
-                              <span
-                                className={`px-2 py-0.5 text-xs rounded-full ${
-                                  visita.status === 'pendente_recebimento'
-                                    ? 'bg-yellow-100 text-yellow-700'
-                                    : visita.status === 'pago'
-                                    ? 'bg-green-100 text-green-700'
-                                    : 'bg-blue-100 text-blue-700'
-                                }`}
-                              >
-                                {visita.status}
-                              </span>
-                            </div>
-                            <p className='text-sm text-zinc-700 mt-1'>
-                              <strong>Valor:</strong> R$ {visita.preco}
-                            </p>
-                          </li>
-                        </DialogTrigger>
-
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Detalhes da Visita</DialogTitle>
-                            <DialogDescription className='text-sm text-zinc-500 border-b pb-2'>
-                              {visita.descricao}
-                            </DialogDescription>
-                          </DialogHeader>
-
-                          <VisitaDetalhesForm visita={visita} />
-                        </DialogContent>
-                      </Dialog>
+                      <VisitaDoDia visita={visita} key={visita.id} />
                     ))}
                   </ul>
                 )}

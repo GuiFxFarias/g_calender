@@ -133,7 +133,7 @@ export default function FormAgendamento({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Data do primeiro envio</FormLabel>
-              <FormControl>
+              <FormControl className='cursor-pointer'>
                 <Input type='datetime-local' {...field} />
               </FormControl>
               <FormMessage />
@@ -154,7 +154,9 @@ export default function FormAgendamento({
                   onChange={(e) => field.onChange(e.target.checked)}
                 />
               </FormControl>
-              <FormLabel className='!m-0'>Mensagem Ativa</FormLabel>
+              <FormLabel className='!m-0 cursor-pointer'>
+                Mensagem Ativa
+              </FormLabel>
               <FormMessage />
             </FormItem>
           )}
