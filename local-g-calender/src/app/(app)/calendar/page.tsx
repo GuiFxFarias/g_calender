@@ -1,6 +1,6 @@
 import AgendaSemana from './agendaSemana';
 
-export default function DashboardPage() {
+export default function CalendarPage() {
   return (
     <div className='h-full'>
       <AgendaSemana />

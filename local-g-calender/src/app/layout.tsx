@@ -59,6 +59,11 @@ export default function RootLayout({
           Clientes
         </Button>
       </Link>
+      <Link href='/dashboard' className='w-full block ' onClick={closeDrawer}>
+        <Button className='w-full justify-start cursor-pointer' variant='ghost'>
+          Dashboard
+        </Button>
+      </Link>
     </nav>
   );
 
