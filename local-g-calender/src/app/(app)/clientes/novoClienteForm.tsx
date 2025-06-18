@@ -114,7 +114,7 @@ export default function ClienteFormMini() {
               )}
             />
 
-            <Button type='submit' className='w-full'>
+            <Button type='submit' className='w-full cursor-pointer'>
               Cadastrar Cliente
             </Button>
           </form>

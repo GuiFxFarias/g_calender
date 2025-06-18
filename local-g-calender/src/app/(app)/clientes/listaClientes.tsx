@@ -32,7 +32,7 @@ export default function ListaClientes() {
   }
 
   return (
-    <div className='flex flex-col space-y-2'>
+    <div className='flex flex-col space-y-2 h-[60vh] overflow-y-auto'>
       {clientes.map((cliente: ClientePayload) => (
         <Card
           key={cliente.id}

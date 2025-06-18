@@ -1,17 +1,14 @@
 import { ClientePayload } from '@/types/Cliente';
 
 export async function apiCriarCliente(payload: ClientePayload) {
-  const formData = new FormData();
-
-  formData.append('nome', payload.nome);
-  formData.append('telefone', payload.telefone);
-  formData.append('endereco', payload.endereco || '');
-
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/criarCliente`,
     {
       method: 'POST',
-      body: formData,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
     }
   );
 

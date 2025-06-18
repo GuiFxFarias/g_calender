@@ -107,7 +107,7 @@ export default function AgendaSemana() {
               value={`dia-${index}`}
               className='border border-zinc-200 rounded-lg shadow-sm'
             >
-              <AccordionTrigger className='px-4 py-3 hover:bg-zinc-50 transition-colors'>
+              <AccordionTrigger className='px-4 py-3 hover:bg-zinc-50 transition-colors cursor-pointer'>
                 <div className='flex justify-between items-center w-full text-left'>
                   <span className='font-semibold text-zinc-800'>
                     {format(day, 'EEEE', { locale: ptBR })[0].toUpperCase()}

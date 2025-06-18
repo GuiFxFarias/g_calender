@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { setCookie } from 'cookies-next';
 import { Eye, EyeOff } from 'lucide-react'; // ou outro ícone que você usa
+import toast from 'react-hot-toast';
 
 interface IForm {
   email: string;
@@ -44,8 +45,6 @@ export default function LoginPage() {
 
   async function onSubmit(values: IForm) {
     setLoading(true);
-
-    console.log(values);
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
         method: 'POST',
@@ -72,13 +71,13 @@ export default function LoginPage() {
         });
 
         localStorage.setItem('usuarioEmail', usuario.Email);
-
+        toast.success('Login realizado');
         router.push('/calendar');
       } else {
-        console.log('Erro no login:', resJson?.erro || 'Autenticação falhou.');
+        toast.error(`Autenticação falhou: ${resJson?.erro}`);
       }
     } catch (error: any) {
-      console.log('Erro no login:', error.message);
+      toast.error(`Autenticação falhou: ${error.message}`);
     } finally {
       setLoading(false);
     }
