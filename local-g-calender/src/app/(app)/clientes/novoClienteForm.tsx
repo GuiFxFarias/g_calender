@@ -55,7 +55,7 @@ export default function ClienteFormMini() {
   };
 
   return (
-    <Card className='w-full max-w-md mx-auto '>
+    <Card className='w-full max-w-md '>
       <CardContent>
         <h2 className='text-xl font-semibold mb-6 text-center'>Novo Cliente</h2>
 

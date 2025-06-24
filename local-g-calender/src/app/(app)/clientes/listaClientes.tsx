@@ -4,9 +4,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { getClientes } from './api/apiBuscarClientes';
 import { ClientePayload } from '@/types/Cliente';
-import { Pen, Trash } from 'lucide-react';
+import { Trash } from 'lucide-react';
 import { apiDeletarCliente } from './api/apiDeletarCliente';
 import toast from 'react-hot-toast';
+import { EditarClienteDialog } from './editarClienteForm';
 
 export default function ListaClientes() {
   const {
@@ -63,7 +64,7 @@ export default function ListaClientes() {
                   className='size-7 cursor-pointer hover:bg-zinc-200 p-1 rounded-md transition-all'
                   onClick={() => deletarCliente(Number(cliente.id))}
                 />
-                <Pen className='size-7 cursor-pointer hover:bg-zinc-200 p-1 rounded-md transition-all' />
+                <EditarClienteDialog clienteId={Number(cliente.id)} />
               </span>
             </div>
             <p>
