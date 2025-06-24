@@ -1,9 +1,12 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { getClientes } from './api/apiBuscarClientes';
 import { ClientePayload } from '@/types/Cliente';
+import { Pen, Trash } from 'lucide-react';
+import { apiDeletarCliente } from './api/apiDeletarCliente';
+import toast from 'react-hot-toast';
 
 export default function ListaClientes() {
   const {
@@ -13,6 +16,20 @@ export default function ListaClientes() {
   } = useQuery<ClientePayload[], Error>({
     queryKey: ['clientes'],
     queryFn: getClientes,
+  });
+
+  const queryClient = useQueryClient();
+
+  const { mutate: deletarCliente } = useMutation({
+    mutationFn: (id: number) => apiDeletarCliente(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['clientes'] });
+      toast.success('Cliente deletado com sucesso');
+    },
+    onError: (error) => {
+      const msg = error?.message || 'Erro ao deletar cliente.';
+      toast.error(msg);
+    },
   });
 
   if (isLoading) {
@@ -39,7 +56,16 @@ export default function ListaClientes() {
           className='border shadow-sm hover:shadow-md transition'
         >
           <CardContent className='space-y-1'>
-            <h3 className='text-lg font-semibold'>{cliente.nome}</h3>
+            <div className='flex items-center justify-between'>
+              <h3 className='text-lg font-semibold'>{cliente.nome}</h3>
+              <span className='flex items-center space-x-2'>
+                <Trash
+                  className='size-7 cursor-pointer hover:bg-zinc-200 p-1 rounded-md transition-all'
+                  onClick={() => deletarCliente(Number(cliente.id))}
+                />
+                <Pen className='size-7 cursor-pointer hover:bg-zinc-200 p-1 rounded-md transition-all' />
+              </span>
+            </div>
             <p>
               <strong>Telefone:</strong> {cliente.telefone}
             </p>

@@ -55,8 +55,8 @@ export default function ClienteFormMini() {
   };
 
   return (
-    <Card className='w-full max-w-md mx-auto mt-8'>
-      <CardContent className='p-6'>
+    <Card className='w-full max-w-md mx-auto '>
+      <CardContent>
         <h2 className='text-xl font-semibold mb-6 text-center'>Novo Cliente</h2>
 
         <Form {...form}>
@@ -68,7 +68,7 @@ export default function ClienteFormMini() {
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <input
+                    <Input
                       className='input input-bordered w-full'
                       {...field}
                       placeholder='Ex: João Silva'
