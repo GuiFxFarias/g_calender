@@ -30,6 +30,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.57.0",
     "react-hot-toast": "^2.5.2",
+    "react-indiana-drag-scroll": "^2.2.1",
     "react-number-format": "^5.4.4",
     "recharts": "^2.15.3",
     "tailwind-merge": "^3.3.0",

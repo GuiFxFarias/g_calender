@@ -17,7 +17,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { apiCriarVisitaComAnexo } from './api/apiCriatVisita';
 import { useEffect, useState } from 'react';
-
+import { useWatch } from 'react-hook-form';
+import { format } from 'date-fns';
 import {
   Select,
   SelectContent,
@@ -26,13 +27,18 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { apiListarClientes, Cliente } from './api/apiListarClientes';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Label } from '@/components/ui/label';
 // import { Paperclip } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { apiCriarClienteTemporario } from './api/apiCriarClienteSemCadastro';
 import { Paperclip } from 'lucide-react';
 import { FormattedInput } from '@/components/ui/patternFormatComp';
+import { VisitaComAnexoPayload } from '@/types/VisitaComPayload';
+import { apiBuscarTodasVisitas } from './api/apiBuscarTodasVisitas';
+import { apiBuscarClientePorId } from './api/apiBuscaClienteId';
+import { ClientePayload } from '@/types/Cliente';
+import ScrollContainer from 'react-indiana-drag-scroll';
 
 const formSchema = z.object({
   cliente_id: z.coerce.number().min(0, 'Selecione o cliente').optional(),
@@ -62,6 +68,9 @@ export default function EventoForm() {
   }, []);
   const [clienteSemCadastro, setClienteSemCadastro] = useState<boolean>();
   const [arquivosSelecionados, setArquivosSelecionados] = useState<File[]>([]);
+  const [clientesDasVisitas, setClientesDasVisitas] = useState<
+    Record<number, ClientePayload>
+  >({});
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -80,8 +89,6 @@ export default function EventoForm() {
 
   const onSubmit = async (values: FormValues) => {
     let clienteIdFinal = values.cliente_id;
-
-    console.log(values);
 
     if (clienteSemCadastro && values.nome_cliente) {
       try {
@@ -113,6 +120,62 @@ export default function EventoForm() {
       toast.error('Erro ao criar visita');
     }
   };
+
+  const { data: visitas = [] } = useQuery<VisitaComAnexoPayload[]>({
+    queryKey: ['visitas'],
+    queryFn: () => apiBuscarTodasVisitas(),
+  });
+
+  const dataSelecionada = useWatch({
+    control: form.control,
+    name: 'data_visita',
+  });
+
+  const visitasMesmoDiaHora = visitas.filter((v) => {
+    const data = format(new Date(v.data_visita), 'yyyy-MM-dd');
+    return dataSelecionada === data;
+  });
+
+  const clienteIdsDasVisitas = visitasMesmoDiaHora.map((v) => v.cliente_id);
+
+  useEffect(() => {
+    const buscarClientesDasVisitas = async () => {
+      try {
+        const idsUnicos = Array.from(
+          new Set(
+            clienteIdsDasVisitas.filter(
+              (id): id is number => typeof id === 'number'
+            )
+          )
+        );
+
+        const idsNaoBuscados = idsUnicos.filter(
+          (id) => !clientesDasVisitas[id]
+        );
+
+        if (idsNaoBuscados.length === 0) return;
+
+        const resultados = await Promise.all(
+          idsNaoBuscados.map((id) => apiBuscarClientePorId(id))
+        );
+
+        const novosMapeados = Object.fromEntries(
+          resultados.map((c) => [c.id, c])
+        );
+
+        setClientesDasVisitas((prev) => ({
+          ...prev,
+          ...novosMapeados,
+        }));
+      } catch {
+        toast.error('Erro ao buscar dados dos clientes das visitas');
+      }
+    };
+
+    if (clienteIdsDasVisitas.length > 0) {
+      buscarClientesDasVisitas();
+    }
+  }, [clienteIdsDasVisitas, clientesDasVisitas]);
 
   return (
     <Form {...form}>
@@ -219,6 +282,49 @@ export default function EventoForm() {
             )}
           />
         </div>
+        {dataSelecionada && (
+          <div className='mt-2 '>
+            {visitasMesmoDiaHora.length > 0 ? (
+              <div>
+                <p className='text-sm font-semibold mb-2 text-yellow-700'>
+                  ⚠️ {visitasMesmoDiaHora.length} visita(s) já agendada(s) nesse
+                  horario dia:
+                </p>
+                <ScrollContainer
+                  className='w-2/2 flex space-x-2 cursor-grab'
+                  horizontal
+                  vertical={false}
+                >
+                  {visitasMesmoDiaHora.map((visita) => (
+                    <div
+                      key={visita.id}
+                      className='border rounded-md p-3 shadow-sm bg-yellow-50 text-sm shrink-0'
+                    >
+                      <div>
+                        <strong>Cliente:</strong>{' '}
+                        {visita.cliente_id &&
+                        clientesDasVisitas[visita.cliente_id]?.nome
+                          ? clientesDasVisitas[visita.cliente_id]?.nome
+                          : 'Cliente não identificado'}
+                      </div>
+                      <div>
+                        <strong>Horário:</strong>{' '}
+                        {format(new Date(visita.data_visita), 'HH:mm')}
+                      </div>
+                      <div>
+                        <strong>Valor:</strong> R$ {visita.preco}
+                      </div>
+                    </div>
+                  ))}
+                </ScrollContainer>
+              </div>
+            ) : (
+              <p className='text-sm text-green-600'>
+                ✅ Nenhuma visita marcada nesse dia.
+              </p>
+            )}
+          </div>
+        )}
 
         <FormField
           control={form.control}
