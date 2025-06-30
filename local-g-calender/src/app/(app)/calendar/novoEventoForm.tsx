@@ -291,22 +291,22 @@ export default function EventoForm() {
                   horario dia:
                 </p>
                 <ScrollContainer
-                  className='w-2/2 flex space-x-2 cursor-grab'
+                  className='w-2/2 flex space-x-2 cursor-grab '
                   horizontal
                   vertical={false}
                 >
                   {visitasMesmoDiaHora.map((visita) => (
                     <div
                       key={visita.id}
-                      className='border rounded-md p-3 shadow-sm bg-yellow-50 text-sm shrink-0'
+                      className='border rounded-md w-2/5 p-3 shadow-sm bg-yellow-50 text-sm shrink-0'
                     >
-                      <div>
+                      <p className='text-ellipsis'>
                         <strong>Cliente:</strong>{' '}
                         {visita.cliente_id &&
                         clientesDasVisitas[visita.cliente_id]?.nome
                           ? clientesDasVisitas[visita.cliente_id]?.nome
                           : 'Cliente não identificado'}
-                      </div>
+                      </p>
                       <div>
                         <strong>Horário:</strong>{' '}
                         {format(new Date(visita.data_visita), 'HH:mm')}
