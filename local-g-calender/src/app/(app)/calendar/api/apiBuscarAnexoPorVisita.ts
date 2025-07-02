@@ -3,8 +3,15 @@ import { Anexo } from '@/types/Anexo'; // interface abaixo
 export async function getAnexosPorVisitaId(
   visita_id?: number
 ): Promise<Anexo[]> {
+  const token = localStorage.getItem('token');
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/anexos/${visita_id}`
+    `${process.env.NEXT_PUBLIC_API_URL}/anexos/${visita_id}`,
+    {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
   );
 
   if (!response.ok) {

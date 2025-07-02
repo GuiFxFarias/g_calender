@@ -7,11 +7,15 @@ export async function apiCriarMensagemProgramada(dados: {
   ativo: boolean;
   telefone: string;
 }) {
+  const token = localStorage.getItem('token');
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/mensagens-programadas`,
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify(dados),
     }
   );

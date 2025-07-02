@@ -1,8 +1,12 @@
 import { ClientePayload } from '@/types/Cliente';
 
 export async function getClientes(): Promise<ClientePayload[]> {
+  const token = localStorage.getItem('token');
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/clientes`, {
     method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     cache: 'no-store',
   });
 

@@ -54,8 +54,6 @@ export default function LoginPage() {
         },
       });
 
-      console.log(res);
-
       const resJson = await res.json();
 
       if (res.ok) {
@@ -68,7 +66,7 @@ export default function LoginPage() {
 
         localStorage.setItem('token', token);
         localStorage.setItem('tenant_id', tenant_id);
-        localStorage.setItem('usuarioEmail', usuario.Email);
+        localStorage.setItem('usuarioEmail', usuario.email);
 
         toast.success('Login realizado');
         router.push('/calendar');

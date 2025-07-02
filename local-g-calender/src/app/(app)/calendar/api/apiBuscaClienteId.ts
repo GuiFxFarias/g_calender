@@ -1,9 +1,16 @@
-// ./api/apiBuscarClientePorId.ts
 export async function apiBuscarClientePorId(id?: number) {
-  const res = await fetch(`http://localhost:3001/cliente/${id}`);
+  const token = localStorage.getItem('token');
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cliente/${id}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   if (!res.ok) {
-    throw new Error('Erro ao buscar cliente');
+    const error = await res.json();
+    throw new Error(error?.erro || 'Erro ao buscar cliente');
   }
 
   return res.json();
