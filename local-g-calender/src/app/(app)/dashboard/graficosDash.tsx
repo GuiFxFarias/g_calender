@@ -62,7 +62,7 @@ export default function Dashboard() {
   }, [clientesQuery]);
 
   return (
-    <div className='px-48 space-y-4 mt-10'>
+    <div className='px-14 space-y-4 mt-10'>
       {/* Filtro por período */}
       <div className='flex items-end gap-4 w-full max-w-md rounded-lg'>
         <div className='flex-1'>
