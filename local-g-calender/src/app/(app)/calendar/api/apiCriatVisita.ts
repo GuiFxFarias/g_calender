@@ -15,10 +15,15 @@ export async function apiCriarVisitaComAnexo(payload: VisitaComAnexoPayload) {
     }
   }
 
+  const token = localStorage.getItem('token'); // ou use contexto/autenticação
+
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/criarVisita`,
     {
       method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`, // ✅ ESSENCIAL
+      },
       body: formData,
     }
   );

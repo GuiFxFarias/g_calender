@@ -52,25 +52,24 @@ export default function LoginPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
       });
+
+      console.log(res);
 
       const resJson = await res.json();
 
       if (res.ok) {
         const usuario = resJson.usuario;
-        const { token, expiration } = resJson.value;
+        const { token, tenant_id, expiration } = resJson.value;
 
         setCookie('token', token, {
           expires: new Date(expiration),
-          // path: '/',
-          // secure: process.env.NODE_ENV === 'production',
-          // secure: false,
-          // sameSite: 'none',
-          // sameSite: 'lax',
         });
 
+        localStorage.setItem('token', token);
+        localStorage.setItem('tenant_id', tenant_id);
         localStorage.setItem('usuarioEmail', usuario.Email);
+
         toast.success('Login realizado');
         router.push('/calendar');
       } else {
