@@ -23,6 +23,7 @@ import { Input } from '@/components/ui/input';
 const formSchema = z.object({
   nome: z.string().min(1, 'Nome é obrigatório'),
   telefone: z.string().min(1, 'Telefone é obrigatório'),
+  email: z.string().min(1, 'Email é obrigatório'),
   endereco: z.string().optional(),
 });
 
@@ -31,6 +32,7 @@ export default function ClienteFormMini() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       nome: '',
+      email: '',
       telefone: '',
       endereco: '',
     },
@@ -42,6 +44,7 @@ export default function ClienteFormMini() {
     try {
       await apiCriarCliente({
         nome: values.nome,
+        email: values.email,
         telefone: values.telefone,
         endereco: values.endereco,
       });
@@ -93,6 +96,24 @@ export default function ClienteFormMini() {
                         field.onChange(values.value);
                       }}
                       placeholder='(11) 91234-5678'
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='email'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>E-mail</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder='seuemail@email.com'
+                      type='email'
                     />
                   </FormControl>
                   <FormMessage />

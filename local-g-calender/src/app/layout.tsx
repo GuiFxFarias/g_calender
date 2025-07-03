@@ -77,6 +77,9 @@ export default function RootLayout({
           method: 'POST',
           credentials: 'include',
         });
+        localStorage.removeItem('token');
+        localStorage.removeItem('tenant_id');
+        localStorage.removeItem('usuarioEmail');
         window.location.href = '/';
       }}
     >
