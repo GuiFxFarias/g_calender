@@ -2,7 +2,7 @@ export async function apiCriarClienteTemporario(
   nome?: string,
   telefone?: string
 ): Promise<{ id: number }> {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/clienteSemCadastro`,
     {

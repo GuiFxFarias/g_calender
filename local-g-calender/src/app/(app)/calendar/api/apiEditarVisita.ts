@@ -1,7 +1,7 @@
 import { EditarVisitaPayload } from '@/types/EditarVisitaPayload';
 
 export async function apiEditarVisita(payload: EditarVisitaPayload) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const formData = new FormData();
 
   formData.append('preco', String(payload.preco));

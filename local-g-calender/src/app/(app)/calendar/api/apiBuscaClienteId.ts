@@ -1,5 +1,5 @@
 export async function apiBuscarClientePorId(id?: number) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cliente/${id}`, {
     method: 'GET',

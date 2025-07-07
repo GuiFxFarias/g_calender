@@ -15,7 +15,7 @@ export async function apiCriarVisitaComAnexo(payload: VisitaComAnexoPayload) {
     }
   }
 
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
 
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/criarVisita`,

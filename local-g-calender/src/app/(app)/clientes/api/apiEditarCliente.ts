@@ -1,7 +1,7 @@
 import { ClientePayload } from '@/types/Cliente';
 
 export async function apiEditarCliente(id: number, payload: ClientePayload) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/cliente/${id}`,
     {

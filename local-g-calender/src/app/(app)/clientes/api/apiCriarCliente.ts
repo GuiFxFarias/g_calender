@@ -1,7 +1,7 @@
 import { ClientePayload } from '@/types/Cliente';
 
 export async function apiCriarCliente(payload: ClientePayload) {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/criarCliente`,
     {

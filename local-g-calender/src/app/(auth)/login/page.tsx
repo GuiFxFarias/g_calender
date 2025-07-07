@@ -62,11 +62,12 @@ export default function LoginPage() {
 
         setCookie('token', token, {
           expires: new Date(expiration),
+          path: '/',
         });
 
-        localStorage.setItem('token', token);
-        localStorage.setItem('tenant_id', tenant_id);
-        localStorage.setItem('usuarioEmail', usuario.email);
+        sessionStorage.setItem('token', token);
+        sessionStorage.setItem('tenant_id', tenant_id);
+        sessionStorage.setItem('usuarioEmail', usuario.email);
 
         toast.success('Login realizado');
         router.push('/calendar');
