@@ -19,6 +19,15 @@ import { apiCriarCliente } from './api/apiCriarCliente';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { Input } from '@/components/ui/input';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 const formSchema = z.object({
   nome: z.string().min(1, 'Nome é obrigatório'),
@@ -58,89 +67,118 @@ export default function ClienteFormMini() {
   };
 
   return (
-    <Card className='w-full max-w-md '>
-      <CardContent>
-        <h2 className='text-xl font-semibold mb-6 text-center'>Novo Cliente</h2>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button className='w-full cursor-pointer'>Novo Cliente</Button>
+      </DialogTrigger>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-            <FormField
-              control={form.control}
-              name='nome'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome</FormLabel>
-                  <FormControl>
-                    <Input
-                      className='input input-bordered w-full'
-                      {...field}
-                      placeholder='Ex: João Silva'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+      <DialogContent className='max-w-md'>
+        <DialogHeader>
+          <DialogTitle className='text-center text-xl'>
+            Novo Cliente
+          </DialogTitle>
+        </DialogHeader>
 
-            <FormField
-              control={form.control}
-              name='telefone'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Telefone</FormLabel>
-                  <FormControl>
-                    <FormattedInput
-                      {...field}
-                      format='(##) #####-####'
-                      onValueChange={(values: { value: unknown }) => {
-                        field.onChange(values.value);
-                      }}
-                      placeholder='(11) 91234-5678'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <Card className='shadow-none border-none'>
+          <CardContent>
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className='space-y-4'
+              >
+                <FormField
+                  control={form.control}
+                  name='nome'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome</FormLabel>
+                      <FormControl>
+                        <Input
+                          className='input input-bordered w-full'
+                          {...field}
+                          placeholder='Ex: João Silva'
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name='email'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>E-mail</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder='seuemail@email.com'
-                      type='email'
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name='telefone'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Telefone</FormLabel>
+                      <FormControl>
+                        <FormattedInput
+                          {...field}
+                          format='(##) #####-####'
+                          onValueChange={(values: { value: unknown }) => {
+                            field.onChange(values.value);
+                          }}
+                          placeholder='(11) 91234-5678'
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name='endereco'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Endereço</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder='Rua Exemplo, 123 - Bairro' />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name='email'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>E-mail</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder='seuemail@email.com'
+                          type='email'
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <Button type='submit' className='w-full cursor-pointer'>
-              Cadastrar Cliente
-            </Button>
-          </form>
-        </Form>
-      </CardContent>
-    </Card>
+                <FormField
+                  control={form.control}
+                  name='endereco'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Endereço</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder='Rua Exemplo, 123 - Bairro'
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <DialogFooter className='flex justify-between pt-4'>
+                  <DialogClose asChild>
+                    <Button
+                      type='button'
+                      variant='outline'
+                      className='w-1/2 cursor-pointer'
+                    >
+                      Cancelar
+                    </Button>
+                  </DialogClose>
+                  <Button type='submit' className='w-1/2 cursor-pointer'>
+                    Cadastrar
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </DialogContent>
+    </Dialog>
   );
 }

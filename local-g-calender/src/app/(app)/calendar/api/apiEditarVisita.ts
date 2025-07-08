@@ -5,6 +5,7 @@ export async function apiEditarVisita(payload: EditarVisitaPayload) {
   const formData = new FormData();
 
   formData.append('preco', String(payload.preco));
+  formData.append('cliente_id', String(payload.cliente_id));
   formData.append('status', payload.status);
 
   if (payload.novosArquivos && payload.novosArquivos.length > 0) {

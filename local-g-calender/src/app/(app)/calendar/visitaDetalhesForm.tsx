@@ -61,6 +61,8 @@ export function VisitaDetalhesForm({
   const queryClient = useQueryClient();
 
   const onSubmit = async (values: FormData) => {
+    console.log(values);
+
     try {
       setLoading(true);
 
@@ -69,6 +71,7 @@ export function VisitaDetalhesForm({
         preco: values.preco,
         status: values.status,
         novosArquivos: values.novosArquivos,
+        cliente_id: visita.cliente_id,
       });
 
       toast.success('Visita atualizada com sucesso!');

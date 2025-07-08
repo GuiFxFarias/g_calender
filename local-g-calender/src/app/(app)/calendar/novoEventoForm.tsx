@@ -371,7 +371,7 @@ export default function EventoForm() {
                 const novos = e.target.files ? Array.from(e.target.files) : [];
                 const atualizados = [...arquivosSelecionados, ...novos];
                 setArquivosSelecionados(atualizados);
-                form.setValue('anexos', atualizados); // envia para o submit
+                form.setValue('anexos', atualizados);
               }}
               className='absolute inset-0 opacity-0 cursor-pointer z-10'
             />
