@@ -14,7 +14,7 @@ export default function DialogNovoEvento() {
       {/* Botão para abrir o Dialog */}
       <Dialog>
         <DialogTrigger asChild>
-          <Button className='w-full cursor-pointer' variant='default'>
+          <Button className=' w-full cursor-pointer' variant='default'>
             + Novo Evento
           </Button>
         </DialogTrigger>

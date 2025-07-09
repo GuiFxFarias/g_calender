@@ -19,6 +19,7 @@ import { Loader2 } from 'lucide-react';
 import { setCookie } from 'cookies-next';
 import { Eye, EyeOff } from 'lucide-react'; // ou outro ícone que você usa
 import toast from 'react-hot-toast';
+import Link from 'next/link';
 
 interface IForm {
   email: string;
@@ -70,7 +71,7 @@ export default function LoginPage() {
         sessionStorage.setItem('usuarioEmail', usuario.email);
 
         toast.success('Login realizado');
-        router.push('/calendar');
+        // router.push('/calendar');
       } else {
         toast.error(`Autenticação falhou: ${resJson?.erro}`);
       }
@@ -159,6 +160,14 @@ export default function LoginPage() {
             </Button>
           </form>
         </Form>
+        <div className='flex justify-between items-center'>
+          <Link href={'/esqueci-senha'} className='text-blue-500 underline'>
+            Redefinir Senha
+          </Link>
+          <Link href={'/register'} className='text-blue-500 underline'>
+            Registrar-se
+          </Link>
+        </div>
       </div>
     </div>
   );

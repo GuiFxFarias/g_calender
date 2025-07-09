@@ -42,7 +42,14 @@ export default function RootLayout({
   }, []);
 
   // Rotas sem barra lateral
-  const noSidebarRoutes = ['/', '/login', '/register'];
+  const noSidebarRoutes = [
+    '/',
+    '/login',
+    '/register',
+    '/redefinir-senha',
+    '/esqueci-senha',
+  ];
+
   const shouldShowSidebar = !noSidebarRoutes.includes(pathname);
   const drawerCloseRef = React.useRef<HTMLButtonElement>(null);
 
@@ -50,7 +57,10 @@ export default function RootLayout({
   const NavigationLinks = ({ className = '', closeDrawer = () => {} }) => (
     <nav className={`space-y-4 ${className}`}>
       <Link href='/calendar' className='w-full block ' onClick={closeDrawer}>
-        <Button className='w-full justify-start cursor-pointer' variant='ghost'>
+        <Button
+          className='cursor-pointer w-full justify-start '
+          variant='ghost'
+        >
           Calendário
         </Button>
       </Link>
