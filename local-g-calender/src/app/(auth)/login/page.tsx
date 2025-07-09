@@ -71,7 +71,7 @@ export default function LoginPage() {
         sessionStorage.setItem('usuarioEmail', usuario.email);
 
         toast.success('Login realizado');
-        // router.push('/calendar');
+        router.push('/calendar');
       } else {
         toast.error(`Autenticação falhou: ${resJson?.erro}`);
       }
