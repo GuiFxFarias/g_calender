@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
+
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,21 +15,22 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { setCookie } from 'cookies-next';
-import { Eye, EyeOff } from 'lucide-react'; // ou outro ícone que você usa
 import toast from 'react-hot-toast';
 import Link from 'next/link';
-
-interface IForm {
-  email: string;
-  senha: string;
-}
+import Image from 'next/image';
+import Capa from '../../../../public/img/Gtech.png';
 
 const loginSchema = z.object({
   email: z.string().email('Por favor, insira um email válido.'),
   senha: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres.'),
 });
+
+interface IForm {
+  email: string;
+  senha: string;
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -50,9 +51,7 @@ export default function LoginPage() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
         method: 'POST',
         body: JSON.stringify(values),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
       });
 
       const resJson = await res.json();
@@ -75,22 +74,32 @@ export default function LoginPage() {
       } else {
         toast.error(`Autenticação falhou: ${resJson?.erro}`);
       }
-    } catch (error: any) {
-      toast.error(`Autenticação falhou: ${error.message}`);
+    } catch {
+      toast.error(`Autenticação falhou`);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className='flex items-center justify-center min-h-screen bg-gray-100'>
-      <div className='w-full max-w-md p-8 space-y-6 bg-white shadow-lg rounded-lg'>
-        <h1 className='text-2xl font-semibold text-center text-gray-700'>
-          Login
+    <div className='min-h-screen flex items-center justify-center bg-gray-50 dark:bg-zinc-900 px-4'>
+      <div className='w-full max-w-md space-y-6 bg-white dark:bg-zinc-950 shadow-xl rounded-xl p-8'>
+        {/* Imagem centralizada */}
+        <div className='flex justify-center'>
+          <Image
+            src={Capa}
+            alt='Logo G-Tech'
+            className='w-32 h-auto'
+            priority
+          />
+        </div>
+
+        <h1 className='text-2xl font-bold text-center text-zinc-800 dark:text-white'>
+          Acesse sua conta
         </h1>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-            {/* Campo de Email */}
             <FormField
               name='email'
               control={form.control}
@@ -108,64 +117,65 @@ export default function LoginPage() {
                 </FormItem>
               )}
             />
-            {/* Campo de Senha */}
+
             <FormField
               name='senha'
               control={form.control}
-              render={({ field }) => {
-                return (
-                  <FormItem>
-                    <FormLabel>Senha</FormLabel>
-                    <FormControl>
-                      <div className='relative'>
-                        <Input
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder='Digite sua senha'
-                          {...field}
-                          className='pr-10'
-                        />
-                        <button
-                          type='button'
-                          onClick={() => setShowPassword((prev) => !prev)}
-                          className='absolute right-2 top-2.5 text-gray-500'
-                          tabIndex={-1}
-                        >
-                          {showPassword ? (
-                            <EyeOff size={18} />
-                          ) : (
-                            <Eye size={18} />
-                          )}
-                        </button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                );
-              }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Senha</FormLabel>
+                  <FormControl>
+                    <div className='relative'>
+                      <Input
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder='Digite sua senha'
+                        {...field}
+                        className='pr-10'
+                      />
+                      <button
+                        type='button'
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        className='absolute right-2 top-2.5 text-gray-500 dark:text-gray-400'
+                        tabIndex={-1}
+                      >
+                        {showPassword ? (
+                          <EyeOff size={18} />
+                        ) : (
+                          <Eye size={18} />
+                        )}
+                      </button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {/* Botão de Login */}
-            <Button
-              type='submit'
-              className='w-full flex justify-center items-center'
-              disabled={loading}
-            >
+
+            <Button type='submit' className='w-full' disabled={loading}>
               {loading ? (
-                <>
-                  <Loader2 className='animate-spin mr-2' size={20} />
+                <div className='flex items-center justify-center gap-2'>
+                  <Loader2 className='animate-spin' size={20} />
                   Entrando...
-                </>
+                </div>
               ) : (
                 'Entrar'
               )}
             </Button>
           </form>
         </Form>
-        <div className='flex justify-between items-center'>
-          <Link href={'/esqueci-senha'} className='text-blue-500 underline'>
-            Redefinir Senha
+
+        <div className='flex justify-between text-sm text-zinc-600 dark:text-zinc-400'>
+          <Link
+            href='/esqueci-senha'
+            className='hover:underline text-blue-600 dark:text-blue-400'
+          >
+            Esqueci a senha
           </Link>
-          <Link href={'/register'} className='text-blue-500 underline'>
-            Registrar-se
+          <Link
+            href='/register'
+            className='hover:underline text-blue-600 dark:text-blue-400'
+          >
+            Criar conta
           </Link>
         </div>
       </div>

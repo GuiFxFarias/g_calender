@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(req: NextRequest) {
   const token = req.cookies.get('token')?.value;
-  const publicRoutes = ['/', '/login'];
+  const publicRoutes = ['/', '/login', '/register'];
 
   const pathname = req.nextUrl.pathname;
 

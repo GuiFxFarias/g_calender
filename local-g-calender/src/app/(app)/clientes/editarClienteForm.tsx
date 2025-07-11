@@ -33,6 +33,7 @@ const formSchema = z.object({
   nome: z.string().min(1, 'Nome é obrigatório'),
   telefone: z.string().min(1, 'Telefone é obrigatório'),
   endereco: z.string().optional(),
+  email: z.string(),
 });
 
 interface EditarClienteDialogProps {
@@ -46,6 +47,7 @@ export function EditarClienteDialog({ clienteId }: EditarClienteDialogProps) {
       nome: '',
       telefone: '',
       endereco: '',
+      email: '',
     },
   });
 
@@ -62,6 +64,7 @@ export function EditarClienteDialog({ clienteId }: EditarClienteDialogProps) {
         nome: data.nome,
         telefone: data.telefone,
         endereco: data.endereco || '',
+        email: data.email,
       });
     }
   }, [data, form]);
@@ -126,6 +129,20 @@ export function EditarClienteDialog({ clienteId }: EditarClienteDialogProps) {
                         }}
                         placeholder='(11) 91234-5678'
                       />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='email'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>E-mail</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder='email@exemplo.com' />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

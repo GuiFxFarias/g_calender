@@ -4,6 +4,8 @@ export async function apiEditarVisita(payload: EditarVisitaPayload) {
   const token = sessionStorage.getItem('token');
   const formData = new FormData();
 
+  console.log(payload);
+
   formData.append('preco', String(payload.preco));
   formData.append('cliente_id', String(payload.cliente_id));
   formData.append('status', payload.status);

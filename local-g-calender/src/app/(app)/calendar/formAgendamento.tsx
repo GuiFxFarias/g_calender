@@ -93,7 +93,7 @@ export default function FormAgendamento({
     <Form {...formProgramado}>
       <form
         onSubmit={formProgramado.handleSubmit(onSubmitProgramado)}
-        className='space-y-4'
+        className='space-y-4 max-w-xl w-full mx-auto px-4'
       >
         <FormField
           control={formProgramado.control}
@@ -104,7 +104,7 @@ export default function FormAgendamento({
               <FormControl>
                 <Textarea
                   placeholder='Digite a mensagem...'
-                  className='resize-none'
+                  className='resize-none w-full'
                   {...field}
                 />
               </FormControl>
@@ -120,7 +120,7 @@ export default function FormAgendamento({
             <FormItem>
               <FormLabel>Intervalo (dias)</FormLabel>
               <FormControl>
-                <Input type='number' {...field} />
+                <Input type='number' className='w-full' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -133,8 +133,12 @@ export default function FormAgendamento({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Data do primeiro envio</FormLabel>
-              <FormControl className='cursor-pointer'>
-                <Input type='datetime-local' {...field} />
+              <FormControl>
+                <Input
+                  type='datetime-local'
+                  className='w-full cursor-pointer'
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -145,18 +149,20 @@ export default function FormAgendamento({
           control={formProgramado.control}
           name='ativo'
           render={({ field }) => (
-            <FormItem className='flex flex-row items-center space-x-2'>
-              <FormControl>
-                <input
-                  type='checkbox'
-                  className='w-4 h-4'
-                  checked={field.value}
-                  onChange={(e) => field.onChange(e.target.checked)}
-                />
-              </FormControl>
-              <FormLabel className='!m-0 cursor-pointer'>
-                Mensagem Ativa
-              </FormLabel>
+            <FormItem>
+              <div className='flex items-center space-x-2'>
+                <FormControl>
+                  <input
+                    type='checkbox'
+                    className='w-4 h-4'
+                    checked={field.value}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                  />
+                </FormControl>
+                <FormLabel className='m-0 cursor-pointer'>
+                  Mensagem Ativa
+                </FormLabel>
+              </div>
               <FormMessage />
             </FormItem>
           )}

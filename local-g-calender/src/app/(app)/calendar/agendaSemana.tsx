@@ -10,12 +10,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
+// import {
+//   Accordion,
+//   AccordionContent,
+//   AccordionItem,
+//   AccordionTrigger,
+// } from '@/components/ui/accordion';
 import DialogNovoEvento from './dialogNovoEvento';
 import { useQuery } from '@tanstack/react-query';
 import { apiBuscarVisitasSemana } from './api/apiBuscarVisitas';
@@ -54,10 +54,10 @@ export default function AgendaSemana() {
   const nextWeek = () => setCurrentWeekStart((prev) => addWeeks(prev, 1));
 
   return (
-    <div className='h-screen flex flex-col p-4 gap-4 '>
-      {/* Navegação */}
-      <div className='flex justify-start items-center gap-2'>
-        <Button variant='outline' onClick={previousWeek}>
+    <div className='min-h-screen max-w-7xl mx-auto px-4 py-6 space-y-6'>
+      {/* Navegacao semanal */}
+      <div className='flex flex-wrap gap-3 justify-between items-center'>
+        <Button variant='ghost' onClick={previousWeek}>
           ⟵ Semana anterior
         </Button>
 
@@ -78,59 +78,53 @@ export default function AgendaSemana() {
 
         <DialogNovoEvento />
 
-        <Button variant='outline' onClick={nextWeek}>
+        <Button variant='ghost' onClick={nextWeek}>
           Semana seguinte ⟶
         </Button>
       </div>
 
-      {/* Acordeon com dias e visitas */}
-      <Accordion
-        type='single'
-        collapsible
-        className='w-full overflow-y-auto space-y-2 py-2'
-      >
-        {days.map((day, index) => {
-          const dataStr = format(day, 'yyyy-MM-dd');
-          const visitasDoDia = visitas.filter(
-            (v) => format(new Date(v.data_visita), 'yyyy-MM-dd') === dataStr
-          );
+      {/* Grade da semana estilo Teams */}
+      <div className='overflow-y-auto h-[60vh]'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4 '>
+          {days.map((day, index) => {
+            const dataStr = format(day, 'yyyy-MM-dd');
+            const visitasDoDia = visitas.filter(
+              (v) => format(new Date(v.data_visita), 'yyyy-MM-dd') === dataStr
+            );
 
-          return (
-            <AccordionItem
-              key={index}
-              value={`dia-${index}`}
-              className='border border-zinc-200 rounded-lg shadow-sm'
-            >
-              <AccordionTrigger className='px-4 py-3 hover:bg-zinc-50 transition-colors cursor-pointer'>
-                <div className='flex justify-between items-center w-full text-left'>
-                  <span className='font-semibold text-zinc-800'>
-                    {format(day, 'EEEE', { locale: ptBR })[0].toUpperCase()}
-                    {format(day, 'EEEE', { locale: ptBR }).slice(1)} -{' '}
-                    {format(day, 'dd/MM/yyyy')}
-                  </span>
-                  <span className='text-sm text-zinc-500'>
-                    {visitasDoDia.length} visita(s)
-                  </span>
-                </div>
-              </AccordionTrigger>
-
-              <AccordionContent className='bg-white border-t border-zinc-200 px-4 py-3'>
-                {visitasDoDia.length === 0 ? (
-                  <p className='text-sm text-zinc-400'>
-                    Nenhuma visita agendada.
+            return (
+              <div
+                key={index}
+                className='bg-white dark:bg-zinc-900 shadow-sm rounded-lg border p-4 flex flex-col justify-between'
+              >
+                <div>
+                  <h3 className='font-semibold text-lg text-zinc-800 dark:text-white mb-1'>
+                    {format(day, 'EEEE', { locale: ptBR })[0].toUpperCase() +
+                      format(day, 'EEEE', { locale: ptBR }).slice(1)}
+                  </h3>
+                  <p className='text-sm text-zinc-500 mb-3'>
+                    {format(day, 'dd/MM/yyyy')} - {visitasDoDia.length}{' '}
+                    visita(s)
                   </p>
-                ) : (
-                  <ul className='space-y-3'>
-                    {visitasDoDia.map((visita) => (
-                      <VisitaDoDia visita={visita} key={visita.id} />
-                    ))}
-                  </ul>
-                )}
-              </AccordionContent>
-            </AccordionItem>
-          );
-        })}
-      </Accordion>
+                </div>
+                <div className='flex-1 overflow-auto'>
+                  {visitasDoDia.length === 0 ? (
+                    <p className='text-sm text-zinc-400'>
+                      Nenhuma visita agendada.
+                    </p>
+                  ) : (
+                    <ul className='space-y-2'>
+                      {visitasDoDia.map((visita) => (
+                        <VisitaDoDia visita={visita} key={visita.id} />
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }

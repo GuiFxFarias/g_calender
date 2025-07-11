@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import LoginPage from './(auth)/login/page';
-import { Menu } from 'lucide-react';
+import { Menu, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   Drawer,
   DrawerClose,
@@ -16,6 +16,13 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
+import Logo from '../../public/img/Gtech.png';
+import {
+  Calendar as CalendarIcon,
+  Users as UsersIcon,
+  BarChart as BarChartIcon,
+} from 'lucide-react';
 
 export default function RootLayout({
   children,
@@ -24,6 +31,7 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // Detectar se é mobile baseado no tamanho da tela
   useEffect(() => {
@@ -31,17 +39,11 @@ export default function RootLayout({
       setIsMobile(window.innerWidth < 768);
     };
 
-    // Verificar inicialmente
     checkIsMobile();
-
-    // Adicionar listener para o redimensionamento
     window.addEventListener('resize', checkIsMobile);
-
-    // Remover listener ao desmontar
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
-  // Rotas sem barra lateral
   const noSidebarRoutes = [
     '/',
     '/login',
@@ -53,31 +55,37 @@ export default function RootLayout({
   const shouldShowSidebar = !noSidebarRoutes.includes(pathname);
   const drawerCloseRef = React.useRef<HTMLButtonElement>(null);
 
-  // Componente de navegação reutilizável
-  const NavigationLinks = ({ className = '', closeDrawer = () => {} }) => (
-    <nav className={`space-y-4 ${className}`}>
-      <Link href='/calendar' className='w-full block ' onClick={closeDrawer}>
-        <Button
-          className='cursor-pointer w-full justify-start '
-          variant='ghost'
-        >
-          Calendário
+  const NavigationLinks = ({
+    className = '',
+    closeDrawer = () => {},
+    isCollapsed = false,
+  }: {
+    className?: string;
+    closeDrawer?: () => void;
+    isCollapsed?: boolean;
+  }) => (
+    <nav className={`space-y-2 ${className}`}>
+      <Link href='/calendar' onClick={closeDrawer}>
+        <Button variant='ghost' className='w-full justify-start gap-2'>
+          <CalendarIcon size={20} />
+          {!isCollapsed && 'Calendário'}
         </Button>
       </Link>
-      <Link href='/clientes' className='w-full block ' onClick={closeDrawer}>
-        <Button className='w-full justify-start cursor-pointer' variant='ghost'>
-          Clientes
+      <Link href='/clientes' onClick={closeDrawer}>
+        <Button variant='ghost' className='w-full justify-start gap-2'>
+          <UsersIcon size={20} />
+          {!isCollapsed && 'Clientes'}
         </Button>
       </Link>
-      <Link href='/dashboard' className='w-full block ' onClick={closeDrawer}>
-        <Button className='w-full justify-start cursor-pointer' variant='ghost'>
-          Dashboard
+      <Link href='/dashboard' onClick={closeDrawer}>
+        <Button variant='ghost' className='w-full justify-start gap-2'>
+          <BarChartIcon size={20} />
+          {!isCollapsed && 'Dashboard'}
         </Button>
       </Link>
     </nav>
   );
 
-  // Botão de logout reutilizável
   const LogoutButton = ({ className = '' }) => (
     <Button
       variant='destructive'
@@ -99,15 +107,16 @@ export default function RootLayout({
 
   return (
     <Query>
-      <html lang='en' className='overflow-y-hidden h-screen'>
+      <html lang='pt-br' className='overflow-y-hidden h-screen'>
         <body className='antialiased flex flex-col min-h-screen w-full'>
+          {/* Header para mobile */}
           {shouldShowSidebar && isMobile && (
             <header className='sticky top-0 z-40 border-b bg-background px-4 py-3 flex justify-between items-center md:hidden'>
               <h1 className='text-lg font-semibold'>G-Offer</h1>
               <Drawer>
                 <DrawerTrigger asChild>
                   <Button variant='outline' size='icon'>
-                    <Menu className='h-5 w-5' />
+                    <Menu className='h-5 w-5 ' />
                     <span className='sr-only'>Menu</span>
                   </Button>
                 </DrawerTrigger>
@@ -122,7 +131,11 @@ export default function RootLayout({
                       />
                     </div>
                     <div className='p-6 pt-0'>
-                      <DrawerClose asChild ref={drawerCloseRef}>
+                      <DrawerClose
+                        asChild
+                        ref={drawerCloseRef}
+                        className='cursor-pointer'
+                      >
                         <LogoutButton />
                       </DrawerClose>
                     </div>
@@ -135,17 +148,43 @@ export default function RootLayout({
           <div className='flex flex-1 overflow-hidden'>
             {/* Sidebar para desktop */}
             {shouldShowSidebar && !isMobile && (
-              <aside className='w-64 bg-white shadow-lg hidden md:block'>
-                <div className='flex flex-col justify-between h-full'>
-                  <div className='p-6'>
-                    <h2 className='text-2xl font-bold text-gray-700 mb-6'>
-                      G-Calendar
-                    </h2>
-                    <NavigationLinks />
+              <aside
+                className={`bg-white shadow-lg transition-all duration-300 ease-in-out ${
+                  sidebarOpen ? 'w-64' : 'w-20'
+                } hidden md:flex flex-col`}
+              >
+                {/* Topo com logo e botão de colapsar */}
+                <div className='flex items-center justify-between p-4 border-b'>
+                  <div className='flex items-center gap-2'>
+                    <Image
+                      src={Logo}
+                      alt='Logo G-Tech'
+                      className='w-8 h-auto'
+                    />
+                    {sidebarOpen && (
+                      <span className='text-lg font-bold text-gray-700'>
+                        G-Tech
+                      </span>
+                    )}
                   </div>
-                  <div className='p-6'>
-                    <LogoutButton />
-                  </div>
+                  <button
+                    onClick={() => setSidebarOpen(!sidebarOpen)}
+                    className='text-gray-500 hover:text-gray-700 transition cursor-pointer'
+                  >
+                    {sidebarOpen ? (
+                      <ChevronLeft size={20} />
+                    ) : (
+                      <ChevronRight size={20} />
+                    )}
+                  </button>
+                </div>
+
+                <div className='flex-1 p-4'>
+                  <NavigationLinks isCollapsed={!sidebarOpen} />
+                </div>
+
+                <div className='p-4 border-t'>
+                  <LogoutButton />
                 </div>
               </aside>
             )}

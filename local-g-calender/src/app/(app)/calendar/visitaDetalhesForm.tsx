@@ -66,6 +66,8 @@ export function VisitaDetalhesForm({
     try {
       setLoading(true);
 
+      console.log(values);
+
       await apiEditarVisita({
         id: visita.id,
         preco: values.preco,
@@ -84,8 +86,8 @@ export function VisitaDetalhesForm({
   };
 
   return (
-    <Tabs defaultValue='visita' className='w-full space-y-4'>
-      <TabsList className='w-full grid grid-cols-2'>
+    <Tabs defaultValue='visita' className='w-full space-y-4 max-w-2xl mx-auto'>
+      <TabsList className='grid grid-cols-2 gap-2 sm:gap-4 w-full max-sm:flex max-sm:flex-col max-sm:h-[10vh]'>
         <TabsTrigger value='visita' className='cursor-pointer'>
           Informações da Visita
         </TabsTrigger>
@@ -93,7 +95,11 @@ export function VisitaDetalhesForm({
           Programar Mensagem
         </TabsTrigger>
       </TabsList>
-      <TabsContent value='visita' className='space-y-4'>
+
+      <TabsContent
+        value='visita'
+        className='space-y-4 max-sm:h-[60vh] max-sm:overflow-y-auto'
+      >
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
           <div>
             <Label className='mb-2'>Status</Label>
@@ -128,14 +134,19 @@ export function VisitaDetalhesForm({
 
           <div>
             <Label className='mb-2'>Valor (R$)</Label>
-            <Input type='number' step='0.01' {...form.register('preco')} />
+            <Input
+              className='w-full'
+              type='number'
+              step='0.01'
+              {...form.register('preco')}
+            />
           </div>
 
           <div>
             <Label htmlFor='upload-arquivos' className='mb-2'>
               Anexos
             </Label>
-            <div className='relative inline-block'>
+            <div className='relative inline-block w-full'>
               <Input
                 id='upload-arquivos'
                 type='file'
@@ -153,28 +164,28 @@ export function VisitaDetalhesForm({
               <Button
                 variant='outline'
                 type='button'
-                className='flex items-center gap-2 cursor-pointer'
+                className='flex items-center gap-2 cursor-pointer w-full'
               >
                 <Paperclip className='w-4 h-4' />
                 Selecionar arquivos
               </Button>
             </div>
 
-            {/* Lista dos arquivos adicionados */}
             <ul className='mt-2 list-disc pl-5 text-sm text-gray-600'>
               {arquivosSelecionados.map((file, index) => (
                 <li key={index}>{file.name}</li>
               ))}
             </ul>
+
             <ul className='space-y-2 mt-2'>
               {anexos?.map((anexo) => {
                 const url = anexo.arquivo_url;
-                const nomeArquivo = url.split('/').pop(); // extrai apenas o nome do arquivo
+                const nomeArquivo = url.split('/').pop();
 
                 return (
                   <li
                     key={anexo.id}
-                    className='flex items-center justify-between gap-2 border border-zinc-200 rounded px-3 py-2'
+                    className='flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-zinc-200 rounded px-3 py-2'
                   >
                     <span className='text-sm text-zinc-700 truncate'>
                       {nomeArquivo}
@@ -192,6 +203,7 @@ export function VisitaDetalhesForm({
               })}
             </ul>
           </div>
+
           <Button
             type='submit'
             disabled={loading}
@@ -201,6 +213,7 @@ export function VisitaDetalhesForm({
           </Button>
         </form>
       </TabsContent>
+
       <TabsContent value='programacao'>
         <FormAgendamento visita={visita} />
       </TabsContent>

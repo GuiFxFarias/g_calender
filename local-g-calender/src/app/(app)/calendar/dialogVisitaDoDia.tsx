@@ -41,13 +41,13 @@ export default function VisitaDoDia({
     <Dialog key={visita.id}>
       <DialogTrigger asChild>
         <li className='border border-zinc-200 rounded-md p-3 hover:shadow-md transition cursor-pointer'>
-          <div className='flex justify-between'>
+          <div className='flex justify-between items-center gap-2 flex-wrap'>
             <p className='text-sm text-zinc-700'>
               <strong>Horário:</strong>{' '}
               {format(new Date(visita.data_visita), 'HH:mm')}
             </p>
             <span
-              className={`px-2 py-0.5 text-xs rounded-full ${
+              className={`px-1 py-0.5 text-xs rounded-full truncate ${
                 visita.status === 'pendente_recebimento'
                   ? 'bg-yellow-100 text-yellow-700'
                   : visita.status === 'pago'
@@ -64,19 +64,22 @@ export default function VisitaDoDia({
         </li>
       </DialogTrigger>
 
-      <DialogContent>
+      <DialogContent className='sm:max-w-md w-[95%]'>
         <DialogHeader>
-          <DialogTitle>Detalhes da Visita</DialogTitle>
+          <DialogTitle className='text-lg'>Detalhes da Visita</DialogTitle>
           <DialogDescription className='text-sm text-zinc-500 border-b pb-2'>
             {visita.descricao}
           </DialogDescription>
         </DialogHeader>
-        <div className='flex space-x-2'>
-          <Label>Cliente: </Label>
-          <p className='font-medium'>{cliente?.nome}</p>
+
+        <div className='flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2'>
+          <Label className='text-sm'>Cliente:</Label>
+          <p className='font-medium text-sm'>{cliente?.nome}</p>
         </div>
 
-        <VisitaDetalhesForm visita={visita} />
+        <div className='mt-2'>
+          <VisitaDetalhesForm visita={visita} />
+        </div>
       </DialogContent>
     </Dialog>
   );

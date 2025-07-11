@@ -179,8 +179,11 @@ export default function EventoForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
-        <div className='flex space-x-2 justify-start items-center'>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className='space-y-4 max-w-2xl w-full mx-auto px-4'
+      >
+        <div className='flex space-x-2 items-center'>
           <Checkbox
             checked={clienteSemCadastro}
             onCheckedChange={(checked) => setClienteSemCadastro(!!checked)}
@@ -225,7 +228,11 @@ export default function EventoForm() {
                 <FormItem>
                   <FormLabel>Nome do Cliente</FormLabel>
                   <FormControl>
-                    <Input placeholder='Digite o nome do cliente' {...field} />
+                    <Input
+                      className='w-full'
+                      placeholder='Digite o nome do cliente'
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -245,6 +252,7 @@ export default function EventoForm() {
                         field.onChange(values.value);
                       }}
                       placeholder='(11) 91234-5678'
+                      className='w-full'
                     />
                   </FormControl>
                   <FormMessage />
@@ -254,15 +262,15 @@ export default function EventoForm() {
           </>
         )}
 
-        <div className='flex gap-4'>
+        <div className='flex flex-wrap gap-4'>
           <FormField
             control={form.control}
             name='data_visita'
             render={({ field }) => (
-              <FormItem className='w-1/2'>
+              <FormItem className='flex-1 min-w-[150px]'>
                 <FormLabel>Data</FormLabel>
                 <FormControl>
-                  <Input type='date' {...field} />
+                  <Input type='date' className='w-full' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -272,33 +280,30 @@ export default function EventoForm() {
             control={form.control}
             name='hora_visita'
             render={({ field }) => (
-              <FormItem className='w-1/2'>
+              <FormItem className='flex-1 min-w-[150px]'>
                 <FormLabel>Hora</FormLabel>
                 <FormControl>
-                  <Input type='time' {...field} />
+                  <Input type='time' className='w-full' {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
+
         {dataSelecionada && (
-          <div className='mt-2 '>
+          <div className='mt-2'>
             {visitasMesmoDiaHora.length > 0 ? (
               <div>
                 <p className='text-sm font-semibold mb-2 text-yellow-700'>
                   ⚠️ {visitasMesmoDiaHora.length} visita(s) já agendada(s) nesse
-                  horario dia:
+                  horário:
                 </p>
-                <ScrollContainer
-                  className='w-2/2 flex space-x-2 cursor-grab '
-                  horizontal
-                  vertical={false}
-                >
+                <ScrollContainer className='flex overflow-x-auto space-x-2'>
                   {visitasMesmoDiaHora.map((visita) => (
                     <div
                       key={visita.id}
-                      className='border rounded-md w-2/5 p-3 shadow-sm bg-yellow-50 text-sm shrink-0'
+                      className='border rounded-md min-w-[220px] p-3 shadow-sm bg-yellow-50 text-sm shrink-0'
                     >
                       <p className='text-ellipsis'>
                         <strong>Cliente:</strong>{' '}
@@ -333,7 +338,12 @@ export default function EventoForm() {
             <FormItem>
               <FormLabel>Preço (R$)</FormLabel>
               <FormControl>
-                <Input type='number' step='0.01' {...field} />
+                <Input
+                  type='number'
+                  step='0.01'
+                  className='w-full'
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -349,7 +359,7 @@ export default function EventoForm() {
               <FormControl>
                 <Textarea
                   placeholder='Descreva o serviço...'
-                  className='resize-none'
+                  className='w-full resize-none'
                   {...field}
                 />
               </FormControl>
@@ -385,7 +395,6 @@ export default function EventoForm() {
             </Button>
           </div>
 
-          {/* Lista dos arquivos adicionados */}
           <ul className='mt-2 list-disc pl-5 text-sm text-gray-600'>
             {arquivosSelecionados.map((file, index) => (
               <li key={index}>{file.name}</li>
