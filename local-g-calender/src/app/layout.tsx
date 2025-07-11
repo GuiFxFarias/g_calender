@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import LoginPage from './(auth)/login/page';
-import { Menu, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Menu, ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
 import {
   Drawer,
   DrawerClose,
@@ -71,16 +71,22 @@ export default function RootLayout({
           {!isCollapsed && 'Calendário'}
         </Button>
       </Link>
+      <Link href='/dashboard' onClick={closeDrawer}>
+        <Button variant='ghost' className='w-full justify-start gap-2'>
+          <BarChartIcon size={20} />
+          {!isCollapsed && 'Dashboard'}
+        </Button>
+      </Link>
       <Link href='/clientes' onClick={closeDrawer}>
         <Button variant='ghost' className='w-full justify-start gap-2'>
           <UsersIcon size={20} />
           {!isCollapsed && 'Clientes'}
         </Button>
       </Link>
-      <Link href='/dashboard' onClick={closeDrawer}>
+      <Link href='/mensagens-programadas' onClick={closeDrawer}>
         <Button variant='ghost' className='w-full justify-start gap-2'>
-          <BarChartIcon size={20} />
-          {!isCollapsed && 'Dashboard'}
+          <MessageCircle size={20} />
+          {!isCollapsed && 'Mensagens Programadas'}
         </Button>
       </Link>
     </nav>
