@@ -8,6 +8,7 @@ import { Trash2 } from 'lucide-react';
 import { MensagemProgramada } from '@/types/MensagemProgramada';
 import { apiDeletarMensagem } from './api/apiDeletarMensagem';
 import { apiBuscarMensagens } from './api/apiBuscarMensagens';
+import { EditarMensagemDialog } from './editarMensagemDialog';
 
 export default function MensagensProgramadasPage() {
   const queryClient = useQueryClient();
@@ -47,8 +48,7 @@ export default function MensagensProgramadasPage() {
           <CardHeader className='flex flex-row justify-between items-start'>
             <div>
               <CardTitle className='text-base'>
-                Cliente ID: {mensagem.nome_cliente} | Telefone:{' '}
-                {mensagem.telefone}
+                Cliente: {mensagem.nome_cliente} | Telefone: {mensagem.telefone}
               </CardTitle>
               <p className='text-sm text-zinc-500'>
                 Próxima:{' '}
@@ -64,13 +64,18 @@ export default function MensagensProgramadasPage() {
                 Ativo: {mensagem.ativo ? 'Sim' : 'Não'}
               </p>
             </div>
-            <Button
-              variant='ghost'
-              size='icon'
-              onClick={() => deletarMensagem(mensagem.id)}
-            >
-              <Trash2 className='text-red-500 hover:text-red-700' size={20} />
-            </Button>
+            <div>
+              <Button
+                variant='ghost'
+                size='icon'
+                onClick={() => deletarMensagem(mensagem.id)}
+              >
+                <Trash2 className='text-red-500 hover:text-red-700' size={20} />
+              </Button>
+              <Button variant='ghost' size='icon'>
+                <EditarMensagemDialog mensagem={mensagem} />
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <p className='text-sm text-zinc-700'>{mensagem.texto}</p>
