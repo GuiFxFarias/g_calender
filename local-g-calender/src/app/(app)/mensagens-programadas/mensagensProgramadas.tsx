@@ -52,7 +52,10 @@ export default function MensagensProgramadasPage() {
               </CardTitle>
               <p className='text-sm text-zinc-500'>
                 Próxima:{' '}
-                {new Date(mensagem.proxima_data_envio).toLocaleString()}
+                {new Date(
+                  new Date(mensagem.proxima_data_envio).getTime() +
+                    3 * 60 * 60 * 1000
+                ).toLocaleString('pt-BR')}
               </p>
               <p className='text-sm text-zinc-500'>
                 Intervalo: {mensagem.dias_intervalo} dias
