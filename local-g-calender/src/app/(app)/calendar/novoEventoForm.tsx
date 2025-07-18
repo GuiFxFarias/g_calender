@@ -38,7 +38,6 @@ import { VisitaComAnexoPayload } from '@/types/VisitaComPayload';
 import { apiBuscarTodasVisitas } from './api/apiBuscarTodasVisitas';
 import { apiBuscarClientePorId } from './api/apiBuscaClienteId';
 import { ClientePayload } from '@/types/Cliente';
-import ScrollContainer from 'react-indiana-drag-scroll';
 
 const formSchema = z.object({
   cliente_id: z.coerce.number().min(0, 'Selecione o cliente').optional(),
@@ -292,37 +291,39 @@ export default function EventoForm() {
         </div>
 
         {dataSelecionada && (
-          <div className='mt-2'>
+          <div className='mt-2 flex flex-col w-full'>
             {visitasMesmoDiaHora.length > 0 ? (
-              <div>
+              <>
                 <p className='text-sm font-semibold mb-2 text-yellow-700'>
                   ⚠️ {visitasMesmoDiaHora.length} visita(s) já agendada(s) nesse
                   horário:
                 </p>
-                <ScrollContainer className='flex overflow-x-auto space-x-2'>
+                <div className='overflow-x-auto w-[100%] flex-col xl:flex-wrap flex gap-1 h-[14vh]'>
                   {visitasMesmoDiaHora.map((visita) => (
                     <div
                       key={visita.id}
-                      className='border rounded-md min-w-[220px] p-3 shadow-sm bg-yellow-50 text-sm shrink-0'
+                      className='border rounded-md xl:w-2/5 w-full px-2 shadow-sm bg-yellow-50 text-sm shrink-0'
                     >
-                      <p className='text-ellipsis'>
-                        <strong>Cliente:</strong>{' '}
+                      <p
+                        className='truncate font-semibold'
+                        title={
+                          visita.cliente_id &&
+                          clientesDasVisitas[visita.cliente_id]?.nome
+                            ? clientesDasVisitas[visita.cliente_id]?.nome
+                            : 'Cliente não identificado'
+                        }
+                      >
                         {visita.cliente_id &&
                         clientesDasVisitas[visita.cliente_id]?.nome
                           ? clientesDasVisitas[visita.cliente_id]?.nome
                           : 'Cliente não identificado'}
                       </p>
-                      <div>
-                        <strong>Horário:</strong>{' '}
-                        {format(new Date(visita.data_visita), 'HH:mm')}
-                      </div>
-                      <div>
-                        <strong>Valor:</strong> R$ {visita.preco}
-                      </div>
+                      <div>{format(new Date(visita.data_visita), 'HH:mm')}</div>
+                      <div>R$ {visita.preco}</div>
                     </div>
                   ))}
-                </ScrollContainer>
-              </div>
+                </div>
+              </>
             ) : (
               <p className='text-sm text-green-600'>
                 ✅ Nenhuma visita marcada nesse dia.

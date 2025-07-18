@@ -75,6 +75,7 @@ export function EditarMensagemDialog({ mensagem }: Props) {
   });
 
   function onSubmit(data: EditarMensagemData) {
+    console.log(data.proxima_data_envio);
     editarMensagem(data);
   }
 

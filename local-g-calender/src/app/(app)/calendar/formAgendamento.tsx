@@ -20,6 +20,7 @@ import { VisitaComAnexoPayload } from '@/types/VisitaComPayload';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { apiBuscarClientePorId } from './api/apiBuscaClienteId';
+import { formatarDataLocalParaEnvio } from '@/lib/formataData';
 
 export const schemaProgramado = z.object({
   texto: z.string(),
@@ -79,12 +80,14 @@ export default function FormAgendamento({
       return;
     }
 
+    const dataFormatada = formatarDataLocalParaEnvio(values.proxima_data_envio);
+
     criarMensagem({
       cliente_id: visita.cliente_id,
       telefone: telefone,
       texto: values.texto,
       dias_intervalo: values.dias_intervalo,
-      proxima_data_envio: values.proxima_data_envio,
+      proxima_data_envio: dataFormatada,
       ativo: values.ativo,
     });
   };

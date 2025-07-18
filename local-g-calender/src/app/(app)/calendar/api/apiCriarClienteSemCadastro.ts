@@ -15,6 +15,8 @@ export async function apiCriarClienteTemporario(
     }
   );
 
+  console.log(token);
+
   if (!res.ok) {
     throw new Error('Erro ao criar cliente temporário');
   }

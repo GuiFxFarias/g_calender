@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export function middleware(req: NextRequest) {
   const token = req.cookies.get('token')?.value;
-  const publicRoutes = ['/', '/login', '/register'];
+  const publicRoutes = ['/', '/login', '/register', '/pagamento'];
 
   const pathname = req.nextUrl.pathname;
 
@@ -34,5 +34,6 @@ export const config = {
     '/clientes:path*',
     '/dashboard:path*',
     '/redefinir-senha',
+    '/mensagens-programadas',
   ],
 };

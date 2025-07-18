@@ -5,7 +5,7 @@ import Query from './layoutCliente';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import LoginPage from './(auth)/login/page';
+// import LoginPage from './(auth)/login/page';
 import { Menu, ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
 import {
   Drawer,
@@ -23,6 +23,7 @@ import {
   Users as UsersIcon,
   BarChart as BarChartIcon,
 } from 'lucide-react';
+import LandingPage from './page';
 
 export default function RootLayout({
   children,
@@ -103,6 +104,8 @@ export default function RootLayout({
         });
         sessionStorage.removeItem('token');
         sessionStorage.removeItem('tenant_id');
+        sessionStorage.removeItem('usuarioId');
+        sessionStorage.removeItem('acessoLiberado');
         sessionStorage.removeItem('usuarioEmail');
         window.location.href = '/';
       }}
@@ -196,7 +199,7 @@ export default function RootLayout({
             )}
 
             <main className='flex-1 overflow-y-auto'>
-              {pathname === '/' ? <LoginPage /> : children}
+              {pathname === '/' ? <LandingPage /> : children}
             </main>
           </div>
         </body>

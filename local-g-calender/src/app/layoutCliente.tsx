@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import { VerificaAcesso } from '@/components/verificaAcesso';
 
 const queryClient = new QueryClient();
 export default function Query({ children }: { children: React.ReactNode }) {
@@ -32,9 +33,11 @@ export default function Query({ children }: { children: React.ReactNode }) {
 
     return null;
   }
+
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster />
+      <VerificaAcesso />
       <VerificaTenant />
       {children}
     </QueryClientProvider>
