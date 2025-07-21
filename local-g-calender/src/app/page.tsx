@@ -16,12 +16,10 @@ import Link from 'next/link';
 
 export default function LandingPage() {
   return (
-    <main className='bg-white text-gray-900 font-sans h-[100vh] mx-[20vw] max-sm:m-0'>
+    <main className='bg-white text-gray-900 font-sans h-[100vh] mx-[10vw] max-sm:m-0 max-md:bg-red-400 '>
       {/* Header */}
       <header className='flex items-center justify-between px-8 py-4 shadow-sm sticky top-0 bg-white z-50'>
-        <h1 className='text-2xl font-bold text-blue-700'>
-          Sistema de Agendamento
-        </h1>
+        <h1 className='text-2xl font-bold text-blue-700'>G-Calendar</h1>
 
         {/* Desktop navigation */}
         <nav className='hidden md:flex space-x-6 text-sm font-medium'>
@@ -62,6 +60,12 @@ export default function LandingPage() {
                 <DrawerTitle className='text-blue-700'>Navegação</DrawerTitle>
               </DrawerHeader>
               <div className='flex flex-col px-4 py-2 space-y-4 text-base'>
+                <Link
+                  href='/login'
+                  className='bg-blue-600 text-white px-4 justify-center flex py-2 w-full rounded hover:bg-blue-700'
+                >
+                  Entrar
+                </Link>
                 <a href='#funcionalidades' className='hover:text-blue-600'>
                   Funcionalidades
                 </a>
@@ -71,12 +75,7 @@ export default function LandingPage() {
                 <a href='#precos' className='hover:text-blue-600'>
                   Planos
                 </a>
-                <Link
-                  href='/login'
-                  className='bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-fit'
-                >
-                  Entrar
-                </Link>
+
                 <DrawerClose />
               </div>
             </DrawerContent>
@@ -204,8 +203,13 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className='text-center text-sm text-gray-500 bg-gray-100 py-6'>
-        © {new Date().getFullYear()} Sistema de Agendamento. Todos os direitos
-        reservados.
+        <p>
+          © {new Date().getFullYear()} G-Calendar. Todos os direitos reservados.{' '}
+          <br /> Contato:
+          <span className='text-xs'>
+            +55 (16) 98844-7335 | guilherme.hafarias@gmail.com
+          </span>
+        </p>
       </footer>
     </main>
   );
@@ -213,8 +217,10 @@ export default function LandingPage() {
 
 function Feature({ title, desc }: { title: string; desc: string }) {
   return (
-    <div className='p-5 rounded-lg shadow bg-white border h-[14vh]'>
-      <h4 className='font-semibold text-lg mb-2 text-blue-700'>{title}</h4>
+    <div className='p-5 rounded-lg shadow bg-white border h-[14vh] max-xl:h-[16vh] max-md:h-[18vh]'>
+      <h4 className='font-semibold text-lg mb-2 max-md:mb-0 text-blue-700'>
+        {title}
+      </h4>
       <p className='text-gray-600'>{desc}</p>
     </div>
   );

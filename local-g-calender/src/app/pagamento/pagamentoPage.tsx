@@ -8,7 +8,8 @@ import { useUsuario } from '@/hooks/useUsuario';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 
 const planos = [
   {
@@ -59,6 +60,7 @@ const planos = [
 export default function PagamentoPage() {
   const usuario = useUsuario();
   const router = useRouter();
+  const pathname = usePathname();
 
   async function pagar(plano_id: string) {
     if (!usuario) {
@@ -83,9 +85,22 @@ export default function PagamentoPage() {
 
   return (
     <div className='max-w-6xl mx-auto py-10 px-4'>
-      <h1 className='text-3xl font-bold text-center mb-3'>
-        Escolha o plano ideal para você
-      </h1>
+      <div className='flex flex-col items-center justify-center'>
+        {pathname == '/pagamento' ? (
+          <Link
+            href='/'
+            className='hover:underline text-blue-600 dark:text-blue-400 inline w-full'
+          >
+            <p className='flex text-sm'>
+              <ArrowLeft className='mr-2' />
+              Voltar
+            </p>
+          </Link>
+        ) : null}
+        <h1 className='text-3xl font-bold text-center mb-3 '>
+          Escolha o plano ideal para você
+        </h1>
+      </div>
       <p className='text-center text-muted-foreground mb-10'>
         Todos os planos incluem acesso ao sistema completo, suporte técnico e
         atualizações.

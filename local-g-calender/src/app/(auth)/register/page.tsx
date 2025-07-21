@@ -20,6 +20,7 @@ import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import { apiCadastrarUsuario } from './api/apiCadastrarUsuario';
 import { FormattedInput } from '@/components/ui/patternFormatComp';
+import Link from 'next/link';
 
 const formSchema = z.object({
   nome: z.string().min(3, 'Informe um nome válido'),
@@ -48,6 +49,7 @@ export default function RegisterPage() {
     mutationFn: apiCadastrarUsuario,
     onSuccess: () => {
       toast.success('Usuário cadastrado com sucesso!');
+      toast.success('Redirecionando para o login');
       setTimeout(() => router.push('/login'), 1500);
     },
     onError: (error) => {
@@ -159,6 +161,20 @@ export default function RegisterPage() {
           </Button>
         </form>
       </Form>
+      <div className='justify-between flex mt-2'>
+        <Link
+          href='/'
+          className='hover:underline text-blue-600 text-sm dark:text-blue-400'
+        >
+          Página inicial
+        </Link>
+        <Link
+          href='/login'
+          className='hover:underline text-blue-600 text-sm dark:text-blue-400'
+        >
+          Login
+        </Link>
+      </div>
     </div>
   );
 }
