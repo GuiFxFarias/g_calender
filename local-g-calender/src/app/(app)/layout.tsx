@@ -1,11 +1,9 @@
 'use client';
 
-import './globals.css';
-import Query from './layoutCliente';
+import Query from '../layoutCliente';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-// import LoginPage from './(auth)/login/page';
 import { Menu, ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
 import {
   Drawer,
@@ -15,21 +13,21 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
-import React, { useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import Image from 'next/image';
-import Logo from '../../public/img/Gtech.png';
+import Logo from '../../../public/img/Gtech.png';
 import {
   Calendar as CalendarIcon,
   Users as UsersIcon,
   BarChart as BarChartIcon,
 } from 'lucide-react';
-import LandingPage from './page';
+import LandingPage from '../page';
 
 export default function ComponenteLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: ReactNode;
+}) {
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
