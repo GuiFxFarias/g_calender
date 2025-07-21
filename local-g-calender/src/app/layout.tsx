@@ -2,6 +2,7 @@
 import './globals.css';
 import { ReactNode } from 'react';
 import Query from './layoutCliente';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata = {
   title: 'GCalendar - Sistema de Agendamento',
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           }}
         />
       </head>
+      <Analytics />
       <Query>{children}</Query>
     </html>
   );
