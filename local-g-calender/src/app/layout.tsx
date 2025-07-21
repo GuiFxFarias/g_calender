@@ -1,6 +1,7 @@
 // app/layout.tsx (sem 'use client')
 import './globals.css';
 import { ReactNode } from 'react';
+import Query from './layoutCliente';
 
 export const metadata = {
   title: 'GCalendar - Sistema de Agendamento',
@@ -27,7 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           }}
         />
       </head>
-      <body>{children}</body>
+      <Query>{children}</Query>
     </html>
   );
 }

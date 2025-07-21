@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { VerificaAcesso } from '@/components/verificaAcesso';
-import Head from 'next/head';
 
 const queryClient = new QueryClient();
 export default function Query({ children }: { children: React.ReactNode }) {
@@ -37,22 +36,6 @@ export default function Query({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Head>
-        <script
-          async
-          src='https://www.googletagmanager.com/gtag/js?id=AW-17381179530'
-        ></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'AW-17381179530');
-          `,
-          }}
-        />
-      </Head>
       <Toaster />
       <VerificaAcesso />
       <VerificaTenant />
