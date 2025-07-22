@@ -24,7 +24,7 @@ import { formatarDataLocalParaEnvio } from '@/lib/formataData';
 
 export const schemaProgramado = z.object({
   texto: z.string(),
-  dias_intervalo: z.coerce.number(),
+  dias_intervalo: z.coerce.number().optional(),
   proxima_data_envio: z.string(),
   ativo: z.boolean(),
 });
@@ -42,7 +42,7 @@ export default function FormAgendamento({
       texto: '',
       dias_intervalo: 30,
       proxima_data_envio: '',
-      ativo: false,
+      ativo: true,
     },
   });
 
@@ -86,7 +86,7 @@ export default function FormAgendamento({
       cliente_id: visita.cliente_id,
       telefone: telefone,
       texto: values.texto,
-      dias_intervalo: values.dias_intervalo,
+      dias_intervalo: values.dias_intervalo || 0,
       proxima_data_envio: dataFormatada,
       ativo: values.ativo,
     });
@@ -96,7 +96,7 @@ export default function FormAgendamento({
     <Form {...formProgramado}>
       <form
         onSubmit={formProgramado.handleSubmit(onSubmitProgramado)}
-        className='space-y-4 max-w-xl w-full mx-auto px-4'
+        className='space-y-4 max-w-xl w-full mx-auto '
       >
         <FormField
           control={formProgramado.control}

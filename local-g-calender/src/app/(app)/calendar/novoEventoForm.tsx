@@ -112,7 +112,11 @@ export default function EventoForm() {
         anexos: values.anexos,
       });
 
-      toast.success('Visita criada com sucesso!');
+      toast.success('Evento criado com sucesso!');
+      setTimeout(
+        () => toast.success('Entre no envento e programe sua mensagem!'),
+        2000
+      );
       form.reset();
       await queryClient.refetchQueries({ queryKey: ['visitas'] });
     } catch {
