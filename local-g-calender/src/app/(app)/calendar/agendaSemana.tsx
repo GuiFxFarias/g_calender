@@ -88,7 +88,7 @@ export default function AgendaMensal() {
             return (
               <div
                 key={index}
-                className='bg-white dark:bg-zinc-900 max-h-[30vh] shadow-sm rounded-lg border p-3 flex flex-col justify-between'
+                className='bg-white dark:bg-zinc-900 max-h-[35vh] shadow-sm rounded-lg border p-3 flex flex-col justify-between'
               >
                 <div>
                   <h3 className='text-xs font-medium text-zinc-500 dark:text-zinc-400'>
@@ -103,11 +103,16 @@ export default function AgendaMensal() {
                   {visitasDoDia.length === 0 ? (
                     <p className='text-sm text-zinc-400'>Sem visitas</p>
                   ) : (
-                    <ul className='space-y-2'>
-                      {visitasDoDia.map((visita) => (
-                        <VisitaDoDia visita={visita} key={visita.id} />
-                      ))}
-                    </ul>
+                    <>
+                      <span className='text-sm text-zinc-400'>
+                        Eventos: {visitasDoDia.length}
+                      </span>
+                      <ul className='space-y-2'>
+                        {visitasDoDia.map((visita) => (
+                          <VisitaDoDia visita={visita} key={visita.id} />
+                        ))}
+                      </ul>
+                    </>
                   )}
                 </div>
               </div>
