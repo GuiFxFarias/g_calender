@@ -1,7 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { addWeeks, startOfWeek, format, eachDayOfInterval } from 'date-fns';
+import {
+  format,
+  eachDayOfInterval,
+  startOfMonth,
+  endOfMonth,
+  addMonths,
+  subMonths,
+} from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -10,61 +17,47 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-// import {
-//   Accordion,
-//   AccordionContent,
-//   AccordionItem,
-//   AccordionTrigger,
-// } from '@/components/ui/accordion';
 import DialogNovoEvento from './dialogNovoEvento';
 import { useQuery } from '@tanstack/react-query';
 import { apiBuscarVisitasSemana } from './api/apiBuscarVisitas';
-
 import { VisitaComAnexoPayload } from '@/types/VisitaComPayload';
-
 import VisitaDoDia from './dialogVisitaDoDia';
 
-export default function AgendaSemana() {
+export default function AgendaMensal() {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [currentWeekStart, setCurrentWeekStart] = useState(
-    startOfWeek(new Date(), { weekStartsOn: 0 })
-  );
+  const monthStart = startOfMonth(selectedDate);
+  const monthEnd = endOfMonth(selectedDate);
 
-  const days = eachDayOfInterval({
-    start: currentWeekStart,
-    end: addWeeks(currentWeekStart, 1),
-  }).slice(0, 7);
+  const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
-  const inicioSemana = format(currentWeekStart, 'yyyy-MM-dd');
-  const fimSemana = format(addWeeks(currentWeekStart, 1), 'yyyy-MM-dd');
+  const inicioMes = format(monthStart, 'yyyy-MM-dd');
+  const fimMes = format(monthEnd, 'yyyy-MM-dd');
 
   const { data: visitas = [] } = useQuery<VisitaComAnexoPayload[]>({
-    queryKey: ['visitas', inicioSemana, fimSemana],
-    queryFn: () => apiBuscarVisitasSemana(inicioSemana, fimSemana),
+    queryKey: ['visitas-mensal', inicioMes, fimMes],
+    queryFn: () => apiBuscarVisitasSemana(inicioMes, fimMes),
   });
 
   const handleDateChange = (date: Date | undefined) => {
-    if (date) {
-      setSelectedDate(date);
-      setCurrentWeekStart(startOfWeek(date, { weekStartsOn: 0 }));
-    }
+    if (date) setSelectedDate(date);
   };
 
-  const previousWeek = () => setCurrentWeekStart((prev) => addWeeks(prev, -1));
-  const nextWeek = () => setCurrentWeekStart((prev) => addWeeks(prev, 1));
+  const previousMonth = () => setSelectedDate((prev) => subMonths(prev, 1));
+
+  const nextMonth = () => setSelectedDate((prev) => addMonths(prev, 1));
 
   return (
     <div className='min-h-screen max-w-7xl mx-auto px-4 py-6 space-y-6'>
-      {/* Navegacao semanal */}
+      {/* Navegação mensal */}
       <div className='flex flex-wrap gap-3 justify-between items-center'>
-        <Button variant='ghost' onClick={previousWeek}>
-          ⟵ Semana anterior
+        <Button variant='ghost' onClick={previousMonth}>
+          ⟵ Mês anterior
         </Button>
 
         <Popover>
           <PopoverTrigger asChild>
             <Button variant='outline'>
-              {format(selectedDate, 'dd MMMM yyyy', { locale: ptBR })}
+              {format(selectedDate, 'MMMM yyyy', { locale: ptBR })}
             </Button>
           </PopoverTrigger>
           <PopoverContent className='p-0'>
@@ -78,14 +71,14 @@ export default function AgendaSemana() {
 
         <DialogNovoEvento />
 
-        <Button variant='ghost' onClick={nextWeek}>
-          Semana seguinte ⟶
+        <Button variant='ghost' onClick={nextMonth}>
+          Próximo mês ⟶
         </Button>
       </div>
 
-      {/* Grade da semana estilo Teams */}
-      <div className='overflow-y-auto h-[60vh]'>
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4 '>
+      {/* Grade mensal */}
+      <div className='overflow-y-auto h-[70vh]'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-2'>
           {days.map((day, index) => {
             const dataStr = format(day, 'yyyy-MM-dd');
             const visitasDoDia = visitas.filter(
@@ -95,23 +88,20 @@ export default function AgendaSemana() {
             return (
               <div
                 key={index}
-                className='bg-white dark:bg-zinc-900 shadow-sm rounded-lg border p-4 flex flex-col justify-between'
+                className='bg-white dark:bg-zinc-900 max-h-[30vh] shadow-sm rounded-lg border p-3 flex flex-col justify-between'
               >
                 <div>
-                  <h3 className='font-semibold text-lg text-zinc-800 dark:text-white mb-1'>
-                    {format(day, 'EEEE', { locale: ptBR })[0].toUpperCase() +
-                      format(day, 'EEEE', { locale: ptBR }).slice(1)}
+                  <h3 className='text-xs font-medium text-zinc-500 dark:text-zinc-400'>
+                    {format(day, 'EEEE', { locale: ptBR })}
                   </h3>
-                  <p className='text-sm text-zinc-500 mb-3'>
-                    {format(day, 'dd/MM/yyyy')} - {visitasDoDia.length}{' '}
-                    visita(s)
+                  <p className='text-sm font-semibold text-zinc-800 dark:text-white'>
+                    {format(day, 'dd/MM')}
                   </p>
                 </div>
-                <div className='flex-1 overflow-auto'>
+
+                <div className='mt-2 flex-1 overflow-auto'>
                   {visitasDoDia.length === 0 ? (
-                    <p className='text-sm text-zinc-400'>
-                      Nenhuma visita agendada.
-                    </p>
+                    <p className='text-sm text-zinc-400'>Sem visitas</p>
                   ) : (
                     <ul className='space-y-2'>
                       {visitasDoDia.map((visita) => (
