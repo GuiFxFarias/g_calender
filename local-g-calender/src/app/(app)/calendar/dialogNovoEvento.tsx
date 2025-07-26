@@ -19,7 +19,7 @@ export default function DialogNovoEvento() {
           </Button>
         </DialogTrigger>
 
-        <DialogContent className='max-md:h-[70vh] overflow-y-auto'>
+        <DialogContent className='max-md:h-[75vh] overflow-y-auto'>
           <DialogHeader>
             <DialogTitle>Novo Evento</DialogTitle>
           </DialogHeader>

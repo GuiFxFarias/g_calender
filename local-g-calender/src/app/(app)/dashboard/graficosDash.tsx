@@ -62,11 +62,11 @@ export default function Dashboard() {
   }, [clientesQuery]);
 
   return (
-    <div className='px-14 space-y-4 mt-10'>
+    <>
       {/* Filtro por período */}
-      <div className='flex items-end gap-4 w-full max-w-md rounded-lg'>
+      <div className='flex flex-col md:flex-row items-stretch md:items-end gap-4 w-full max-w-2xl rounded-lg'>
         <div className='flex-1'>
-          <Label htmlFor='inicio' className='mb-2'>
+          <Label htmlFor='inicio' className='mb-2 block'>
             Início
           </Label>
           <Input
@@ -77,7 +77,7 @@ export default function Dashboard() {
           />
         </div>
         <div className='flex-1'>
-          <Label htmlFor='fim' className='mb-2'>
+          <Label htmlFor='fim' className='mb-2 block'>
             Fim
           </Label>
           <Input
@@ -89,8 +89,8 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className='grid grid-cols-2 gap-4'>
-        {/* Linha 1 */}
+      {/* Linha 1 */}
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         <Card>
           <CardHeader>
             <CardTitle>Evolução de Visitas por Semana</CardTitle>
@@ -100,7 +100,7 @@ export default function Dashboard() {
               <AreaChart data={dadosAgrupados}>
                 <XAxis
                   dataKey='semana'
-                  tickFormatter={(value) => value.replace('S', ' Semana ')}
+                  tickFormatter={(v) => v.replace('S', ' Semana ')}
                 />
                 <YAxis />
                 <Tooltip />
@@ -138,16 +138,15 @@ export default function Dashboard() {
       </div>
 
       {/* Linha 2 */}
-      <div className='grid grid-cols-2 gap-4'>
-        {/* Visitas Pendentes */}
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         <Card>
           <CardHeader>
             <CardTitle>Visitas Pendentes</CardTitle>
-            <div className='font-semibold mb-2 text-xl border-b-[1px] border-black'>
+            <div className='font-semibold mb-2 text-xl border-b border-black'>
               Total: {visitasPendentes.length}
             </div>
           </CardHeader>
-          <CardContent className=' overflow-y-auto h-[35vh]'>
+          <CardContent className='overflow-y-auto max-h-[35vh]'>
             <ul className='space-y-2'>
               {visitasPendentes.map((v, i) => (
                 <li key={i} className='text-sm border-b pb-1 relative'>
@@ -174,7 +173,7 @@ export default function Dashboard() {
                     {format(new Date(v.data_visita), 'dd/MM/yyyy HH:mm')}
                   </div>
                   <div>
-                    <strong>Valor:</strong> R$
+                    <strong>Valor:</strong>{' '}
                     {v.preco.toLocaleString('pt-BR', {
                       style: 'currency',
                       currency: 'BRL',
@@ -186,15 +185,14 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Visitas Finalizadas */}
         <Card>
           <CardHeader>
             <CardTitle>Visitas Finalizadas</CardTitle>
-            <div className='font-semibold mb-2 text-xl border-b-[1px] border-black'>
+            <div className='font-semibold mb-2 text-xl border-b border-black'>
               Total: {visitasFinalizadas.length}
             </div>
           </CardHeader>
-          <CardContent className=' overflow-y-auto h-[35vh]'>
+          <CardContent className='overflow-y-auto max-h-[35vh]'>
             <ul className='space-y-2'>
               {visitasFinalizadas.map((v, i) => (
                 <li key={i} className='text-sm border-b pb-1 relative'>
@@ -221,7 +219,7 @@ export default function Dashboard() {
                     {format(new Date(v.data_visita), 'dd/MM/yyyy HH:mm')}
                   </div>
                   <div>
-                    <strong>Valor:</strong> R$
+                    <strong>Valor:</strong>{' '}
                     {v.preco.toLocaleString('pt-BR', {
                       style: 'currency',
                       currency: 'BRL',
@@ -233,6 +231,6 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </>
   );
 }
