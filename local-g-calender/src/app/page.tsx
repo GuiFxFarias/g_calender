@@ -16,7 +16,7 @@ import Link from 'next/link';
 
 export default function LandingPage() {
   return (
-    <main className='bg-white text-gray-900 font-sans h-[100vh] mx-[10vw] max-sm:m-0 max-md:bg-red-400 '>
+    <main className='bg-white text-gray-900 font-sans overflow-y-auto mx-[10vw] max-sm:m-0 '>
       {/* Header */}
       <header className='flex items-center justify-between px-8 py-4 shadow-sm sticky top-0 bg-white z-50'>
         <h1 className='text-2xl font-bold text-blue-700'>G-Calendar</h1>
