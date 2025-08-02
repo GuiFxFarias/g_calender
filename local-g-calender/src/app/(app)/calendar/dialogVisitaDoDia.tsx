@@ -58,9 +58,22 @@ export default function VisitaDoDia({
               {visita.status}
             </span>
           </div>
-          <p className='text-sm text-zinc-700 mt-1'>
-            <strong>Valor:</strong> R$ {visita.preco}
-          </p>
+
+          {/* Exibir tags da visita aqui */}
+          <div className='mt-2 flex flex-wrap gap-1'>
+            {(visita.tags ?? []).length > 0 ? (
+              (visita.tags ?? []).map((tag) => (
+                <span
+                  key={tag.id}
+                  className='text-xs px-2 py-1 rounded bg-blue-100 text-blue-800 border border-blue-300'
+                >
+                  {tag.nome}
+                </span>
+              ))
+            ) : (
+              <span className='text-xs text-zinc-400 italic'>Sem tags</span>
+            )}
+          </div>
         </li>
       </DialogTrigger>
 

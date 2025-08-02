@@ -8,6 +8,10 @@ import {
   endOfMonth,
   addMonths,
   subMonths,
+  startOfWeek,
+  endOfWeek,
+  addWeeks,
+  subWeeks,
 } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
@@ -25,39 +29,60 @@ import VisitaDoDia from './dialogVisitaDoDia';
 
 export default function AgendaMensal() {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const monthStart = startOfMonth(selectedDate);
-  const monthEnd = endOfMonth(selectedDate);
+  const [modoVisualizacao, setModoVisualizacao] = useState<
+    'mensal' | 'semanal'
+  >('mensal');
 
-  const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
+  const dataInicio =
+    modoVisualizacao === 'mensal'
+      ? startOfMonth(selectedDate)
+      : startOfWeek(selectedDate, { weekStartsOn: 0 });
+  const dataFim =
+    modoVisualizacao === 'mensal'
+      ? endOfMonth(selectedDate)
+      : endOfWeek(selectedDate, { weekStartsOn: 0 });
 
-  const inicioMes = format(monthStart, 'yyyy-MM-dd');
-  const fimMes = format(monthEnd, 'yyyy-MM-dd');
+  const days = eachDayOfInterval({ start: dataInicio, end: dataFim });
+
+  const inicio = format(dataInicio, 'yyyy-MM-dd');
+  const fim = format(dataFim, 'yyyy-MM-dd');
 
   const { data: visitas = [] } = useQuery<VisitaComAnexoPayload[]>({
-    queryKey: ['visitas-mensal', inicioMes, fimMes],
-    queryFn: () => apiBuscarVisitasSemana(inicioMes, fimMes),
+    queryKey: ['visitas', modoVisualizacao, inicio, fim],
+    queryFn: () => apiBuscarVisitasSemana(inicio, fim),
   });
 
   const handleDateChange = (date: Date | undefined) => {
     if (date) setSelectedDate(date);
   };
 
-  const previousMonth = () => setSelectedDate((prev) => subMonths(prev, 1));
+  const navegarAtras = () =>
+    setSelectedDate((prev) =>
+      modoVisualizacao === 'mensal' ? subMonths(prev, 1) : subWeeks(prev, 1)
+    );
 
-  const nextMonth = () => setSelectedDate((prev) => addMonths(prev, 1));
+  const navegarFrente = () =>
+    setSelectedDate((prev) =>
+      modoVisualizacao === 'mensal' ? addMonths(prev, 1) : addWeeks(prev, 1)
+    );
 
   return (
     <div className='min-h-screen max-w-7xl mx-auto px-4 py-6 space-y-6'>
-      {/* Navegação mensal */}
+      {/* Navegação */}
       <div className='flex flex-wrap gap-3 justify-between items-center'>
-        <Button variant='ghost' onClick={previousMonth}>
-          ⟵ Mês anterior
+        <Button variant='ghost' onClick={navegarAtras}>
+          ⟵ {modoVisualizacao === 'mensal' ? 'Mês anterior' : 'Semana anterior'}
         </Button>
 
         <Popover>
           <PopoverTrigger asChild>
             <Button variant='outline'>
-              {format(selectedDate, 'MMMM yyyy', { locale: ptBR })}
+              {modoVisualizacao === 'mensal'
+                ? format(selectedDate, 'MMMM yyyy', { locale: ptBR })
+                : `Semana de ${format(dataInicio, 'dd/MM')} a ${format(
+                    dataFim,
+                    'dd/MM'
+                  )}`}
             </Button>
           </PopoverTrigger>
           <PopoverContent className='p-0'>
@@ -69,16 +94,34 @@ export default function AgendaMensal() {
           </PopoverContent>
         </Popover>
 
+        <Button
+          variant='secondary'
+          onClick={() =>
+            setModoVisualizacao((prev) =>
+              prev === 'mensal' ? 'semanal' : 'mensal'
+            )
+          }
+        >
+          Alternar para{' '}
+          {modoVisualizacao === 'mensal' ? 'visão semanal' : 'visão mensal'}
+        </Button>
+
         <DialogNovoEvento />
 
-        <Button variant='ghost' onClick={nextMonth}>
-          Próximo mês ⟶
+        <Button variant='ghost' onClick={navegarFrente}>
+          {modoVisualizacao === 'mensal' ? 'Próximo mês' : 'Próxima semana'} ⟶
         </Button>
       </div>
 
-      {/* Grade mensal */}
+      {/* Grade */}
       <div className='overflow-y-auto h-[70vh]'>
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-2'>
+        <div
+          className={`grid gap-2 ${
+            modoVisualizacao === 'mensal'
+              ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7'
+              : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7'
+          }`}
+        >
           {days.map((day, index) => {
             const dataStr = format(day, 'yyyy-MM-dd');
             const visitasDoDia = visitas.filter(
@@ -101,7 +144,7 @@ export default function AgendaMensal() {
 
                 <div className='mt-2 flex-1 overflow-auto'>
                   {visitasDoDia.length === 0 ? (
-                    <p className='text-sm text-zinc-400'>Sem visitas</p>
+                    <p className='text-xs text-zinc-400 italic'>Sem Eventos</p>
                   ) : (
                     <ul className='space-y-2'>
                       {visitasDoDia.map((visita) => (
@@ -118,7 +161,7 @@ export default function AgendaMensal() {
                               ))
                             ) : (
                               <span className='text-xs text-zinc-400 italic'>
-                                Sem tags
+                                Sem Eventos
                               </span>
                             )}
                           </div>
