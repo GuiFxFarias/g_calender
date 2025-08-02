@@ -113,8 +113,6 @@ export function VisitaDetalhesForm({
     }
   };
 
-  console.log(tags);
-
   return (
     <Tabs defaultValue='visita' className='w-full space-y-4 max-w-2xl mx-auto'>
       <TabsList className='grid grid-cols-2 gap-2 sm:gap-4 w-full max-sm:flex max-sm:flex-col max-sm:h-[10vh]'>

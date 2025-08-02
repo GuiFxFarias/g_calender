@@ -82,9 +82,9 @@ export function EditarMensagemDialog({ mensagem }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <span>
+        <Button variant='ghost' size='icon'>
           <Pencil className='text-blue-500 hover:text-blue-700' size={20} />
-        </span>
+        </Button>
       </DialogTrigger>
 
       <DialogContent>

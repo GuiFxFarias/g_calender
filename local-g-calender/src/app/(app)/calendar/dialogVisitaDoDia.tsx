@@ -37,6 +37,10 @@ export default function VisitaDoDia({
     buscarClienteId();
   }, [visita.cliente_id]);
 
+  const tagsValidas = (visita.tags ?? []).filter(
+    (tag) => tag && tag.id !== null && tag.nome !== null
+  );
+
   return (
     <Dialog key={visita.id}>
       <DialogTrigger asChild>
@@ -61,11 +65,11 @@ export default function VisitaDoDia({
 
           {/* Exibir tags da visita aqui */}
           <div className='mt-2 flex flex-wrap gap-1'>
-            {(visita.tags ?? []).length > 0 ? (
-              (visita.tags ?? []).map((tag) => (
+            {tagsValidas.length > 0 ? (
+              tagsValidas.map((tag) => (
                 <span
                   key={tag.id}
-                  className='text-xs px-2 py-1 rounded bg-blue-100 text-blue-800 border border-blue-300'
+                  className='text-xs px-2 py-1 rounded bg-green-100 text-green-800 border border-green-300'
                 >
                   {tag.nome}
                 </span>

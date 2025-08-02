@@ -64,7 +64,7 @@ export default function Dashboard() {
   return (
     <>
       {/* Filtro por período */}
-      <div className='flex flex-col md:flex-row items-stretch md:items-end gap-4 w-full max-w-2xl rounded-lg'>
+      <div className='flex flex-col md:flex-row items-stretch px-5 pt-10 mb-2 md:items-end gap-4 w-full max-w-2xl rounded-lg'>
         <div className='flex-1'>
           <Label htmlFor='inicio' className='mb-2 block'>
             Início
@@ -90,7 +90,7 @@ export default function Dashboard() {
       </div>
 
       {/* Linha 1 */}
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+      <div className='px-5 grid grid-cols-1 md:grid-cols-2 gap-2 mb-2'>
         <Card>
           <CardHeader>
             <CardTitle>Evolução de Visitas por Semana</CardTitle>
@@ -138,7 +138,7 @@ export default function Dashboard() {
       </div>
 
       {/* Linha 2 */}
-      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+      <div className='px-5 grid grid-cols-1 md:grid-cols-2 gap-2'>
         <Card>
           <CardHeader>
             <CardTitle>Visitas Pendentes</CardTitle>
