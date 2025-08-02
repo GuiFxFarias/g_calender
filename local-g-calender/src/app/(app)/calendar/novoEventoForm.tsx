@@ -38,6 +38,11 @@ import { VisitaComAnexoPayload } from '@/types/VisitaComPayload';
 import { apiBuscarTodasVisitas } from './api/apiBuscarTodasVisitas';
 import { apiBuscarClientePorId } from './api/apiBuscaClienteId';
 import { ClientePayload } from '@/types/Cliente';
+import { Tag } from '@/types/Tag';
+import { apiListarTags } from './api/apiListarTags';
+import { apiVincularTags } from './api/apiVincularTags';
+import { apiCriarTag } from './api/apiCriarTag';
+import TagSelector from '@/components/tagSelector';
 
 const formSchema = z.object({
   cliente_id: z.coerce.number().min(0, 'Selecione o cliente').optional(),
@@ -70,6 +75,15 @@ export default function EventoForm() {
   const [clientesDasVisitas, setClientesDasVisitas] = useState<
     Record<number, ClientePayload>
   >({});
+  const [, setTagsDisponiveis] = useState<Tag[]>([]);
+  const [tagsSelecionadas, setTagsSelecionadas] = useState<number[]>([]);
+  const [novaTag] = useState('');
+
+  useEffect(() => {
+    apiListarTags()
+      .then(setTagsDisponiveis)
+      .catch(() => toast.error('Erro ao buscar tags'));
+  }, []);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -103,7 +117,7 @@ export default function EventoForm() {
     }
 
     try {
-      await apiCriarVisitaComAnexo({
+      const visitaId = await apiCriarVisitaComAnexo({
         cliente_id: clienteIdFinal,
         data_visita: `${values.data_visita}T${values.hora_visita}`,
         preco: values.preco,
@@ -112,13 +126,32 @@ export default function EventoForm() {
         anexos: values.anexos,
       });
 
+      let novaTagId: number | null = null;
+
+      if (novaTag.trim() !== '') {
+        try {
+          novaTagId = await apiCriarTag(novaTag.trim());
+        } catch {
+          toast.error('Erro ao criar nova tag');
+        }
+      }
+
+      const todasTags = [
+        ...tagsSelecionadas,
+        ...(novaTagId ? [novaTagId] : []),
+      ];
+
+      if (todasTags.length > 0) {
+        await apiVincularTags(visitaId, todasTags);
+      }
+
       toast.success('Evento criado com sucesso!');
       setTimeout(
         () => toast.success('Entre no envento e programe sua mensagem!'),
         2000
       );
       form.reset();
-      await queryClient.refetchQueries({ queryKey: ['visitas'] });
+      await queryClient.refetchQueries({ queryKey: ['visitas-mensal'] });
     } catch {
       toast.error('Erro ao criar visita');
     }
@@ -211,11 +244,17 @@ export default function EventoForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {clientes.map((cliente) => (
-                      <SelectItem key={cliente.id} value={String(cliente.id)}>
-                        {cliente.nome}
-                      </SelectItem>
-                    ))}
+                    {clientes.length > 0 ? (
+                      clientes.map((cliente) => (
+                        <SelectItem key={cliente.id} value={String(cliente.id)}>
+                          {cliente.nome}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className='px-4 py-2 text-sm text-muted-foreground'>
+                        Ainda não possui um cliente cadastrado
+                      </div>
+                    )}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -372,6 +411,7 @@ export default function EventoForm() {
             </FormItem>
           )}
         />
+        <TagSelector value={tagsSelecionadas} onChange={setTagsSelecionadas} />
 
         <div>
           <Label htmlFor='upload-arquivos' className='mb-2'>

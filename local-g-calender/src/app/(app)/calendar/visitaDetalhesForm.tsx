@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,6 +22,13 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getAnexosPorVisitaId } from './api/apiBuscarAnexoPorVisita';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import FormAgendamento from './formAgendamento';
+import { apiBuscarTagsDaVisita } from './api/apiBuscarTagVisita';
+import { X } from 'lucide-react';
+import { apiRemoverTag } from './api/apiRemoverTag';
+import TagSelector from '@/components/tagSelector';
+import { apiListarTags } from './api/apiListarTags';
+import { Tag } from '@/types/Tag';
+import { apiVincularTags } from './api/apiVincularTags';
 
 const schema = z.object({
   preco: z.coerce.number().min(0),
@@ -43,6 +50,19 @@ export function VisitaDetalhesForm({
 }) {
   const [loading, setLoading] = useState(false);
   const [arquivosSelecionados, setArquivosSelecionados] = useState<File[]>([]);
+  const [tagsSelecionadas, setTagsSelecionadas] = useState<number[]>([]);
+  const [, setTagsDisponiveis] = useState<Tag[]>([]);
+
+  const { data: tags = [] } = useQuery({
+    queryKey: ['tags-da-visita', visita.id],
+    queryFn: () => apiBuscarTagsDaVisita(visita.id),
+  });
+
+  useEffect(() => {
+    apiListarTags()
+      .then(setTagsDisponiveis)
+      .catch(() => toast.error('Erro ao buscar tags'));
+  }, []);
 
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -61,12 +81,8 @@ export function VisitaDetalhesForm({
   const queryClient = useQueryClient();
 
   const onSubmit = async (values: FormData) => {
-    console.log(values);
-
     try {
       setLoading(true);
-
-      console.log(values);
 
       await apiEditarVisita({
         id: visita.id,
@@ -76,6 +92,18 @@ export function VisitaDetalhesForm({
         cliente_id: visita.cliente_id,
       });
 
+      // 🔁 Vincular novas tags, se houver
+      if (tagsSelecionadas.length > 0) {
+        await apiVincularTags(visita.id, tagsSelecionadas);
+
+        // Atualiza a lista de tags da visita
+        await queryClient.invalidateQueries({
+          queryKey: ['tags-da-visita', visita.id],
+        });
+
+        toast.success('Tags adicionadas à visita');
+      }
+
       toast.success('Visita atualizada com sucesso!');
       await queryClient.refetchQueries({ queryKey: ['visitas'] });
     } catch {
@@ -84,6 +112,8 @@ export function VisitaDetalhesForm({
       setLoading(false);
     }
   };
+
+  console.log(tags);
 
   return (
     <Tabs defaultValue='visita' className='w-full space-y-4 max-w-2xl mx-auto'>
@@ -100,6 +130,42 @@ export function VisitaDetalhesForm({
         value='visita'
         className='space-y-4 max-sm:h-[60vh] max-sm:overflow-y-auto'
       >
+        {tags.length > 0 && (
+          <div>
+            <Label className='mb-1'>Tags da Visita</Label>
+            <div className='flex flex-wrap gap-2'>
+              {tags.map((tag) => (
+                <div
+                  key={tag.id}
+                  className='flex items-center justify-center px-2 py-1 rounded text-xs border bg-blue-100 border-blue-400 text-blue-800'
+                >
+                  <span>{tag.nome}</span>
+                  <button
+                    onClick={async () => {
+                      try {
+                        await apiRemoverTag(visita.id, tag.id);
+                        toast.success('Tag desvinculada');
+
+                        // Refaz a query das tags da visita
+                        await queryClient.invalidateQueries({
+                          queryKey: ['tags-da-visita', visita.id],
+                        });
+                      } catch {
+                        toast.error('Erro ao remover tag');
+                      }
+                    }}
+                    className='ml-1 text-blue-700 cursor-pointer hover:text-red-600'
+                    title='Remover tag'
+                    type='button'
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        <TagSelector value={tagsSelecionadas} onChange={setTagsSelecionadas} />
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4'>
           <div>
             <Label className='mb-2'>Status</Label>

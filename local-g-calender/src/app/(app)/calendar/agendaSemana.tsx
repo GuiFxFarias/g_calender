@@ -103,16 +103,30 @@ export default function AgendaMensal() {
                   {visitasDoDia.length === 0 ? (
                     <p className='text-sm text-zinc-400'>Sem visitas</p>
                   ) : (
-                    <>
-                      <span className='text-sm text-zinc-400'>
-                        Eventos: {visitasDoDia.length}
-                      </span>
-                      <ul className='space-y-2'>
-                        {visitasDoDia.map((visita) => (
-                          <VisitaDoDia visita={visita} key={visita.id} />
-                        ))}
-                      </ul>
-                    </>
+                    <ul className='space-y-2'>
+                      {visitasDoDia.map((visita) => (
+                        <li key={visita.id} className='space-y-1'>
+                          <div className='flex flex-wrap gap-1 mt-1'>
+                            {(visita.tags ?? []).length > 0 ? (
+                              (visita.tags ?? []).map((tag) => (
+                                <span
+                                  key={tag.id}
+                                  className='text-xs px-2 py-1 rounded bg-blue-100 text-blue-800 border border-blue-300'
+                                >
+                                  {tag.nome}
+                                </span>
+                              ))
+                            ) : (
+                              <span className='text-xs text-zinc-400 italic'>
+                                Sem tags
+                              </span>
+                            )}
+                          </div>
+
+                          <VisitaDoDia visita={visita} />
+                        </li>
+                      ))}
+                    </ul>
                   )}
                 </div>
               </div>

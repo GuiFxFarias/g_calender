@@ -33,5 +33,6 @@ export async function apiCriarVisitaComAnexo(payload: VisitaComAnexoPayload) {
     throw new Error(erro?.erro || 'Erro ao criar visita');
   }
 
-  return response.json();
+  const data = await response.json();
+  return data.visita_id;
 }

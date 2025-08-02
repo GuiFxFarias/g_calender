@@ -1,3 +1,5 @@
+import { Tag } from './Tag';
+
 export type VisitaComAnexoPayload = {
   id?: number;
   cliente_id?: number;
@@ -6,4 +8,5 @@ export type VisitaComAnexoPayload = {
   descricao: string;
   status: 'pendente_visita' | 'pendente_recebimento' | 'pago' | 'cancelado';
   anexos?: FileList | null;
+  tags?: Tag[]; // ✅ Adicionado aqui
 };
