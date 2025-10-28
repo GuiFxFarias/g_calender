@@ -42,9 +42,7 @@ export function ListaAnexosCliente({ clienteId }: ListaAnexosClienteProps) {
           key={anexo.id}
           className='border rounded-md px-3 py-2 flex justify-between items-center text-sm'
         >
-          <span className='truncate max-w-[70%]'>
-            {anexo.arquivo_url.split('/').pop()}
-          </span>
+          <span className='truncate max-w-[70%]'>{anexo.nome_original}</span>
           <span className='flex items-center gap-2'>
             <a
               href={`${process.env.NEXT_PUBLIC_API_URL}${anexo.arquivo_url}`}

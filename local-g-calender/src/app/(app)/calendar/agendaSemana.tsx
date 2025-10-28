@@ -122,7 +122,7 @@ export default function AgendaMensal() {
               : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7'
           }`}
         >
-          {days.map((day, index) => {
+          {days.map((day) => {
             const dataStr = format(day, 'yyyy-MM-dd');
             const visitasDoDia = visitas.filter(
               (v) => format(new Date(v.data_visita), 'yyyy-MM-dd') === dataStr
@@ -130,7 +130,7 @@ export default function AgendaMensal() {
 
             return (
               <div
-                key={index}
+                key={dataStr}
                 className='bg-white dark:bg-zinc-900 max-h-[35vh] shadow-sm rounded-lg border p-3 flex flex-col justify-between'
               >
                 <div>
@@ -154,7 +154,7 @@ export default function AgendaMensal() {
 
                       {visitasDoDia.map((visita) => (
                         <div key={visita.id} className='space-y-1'>
-                          <VisitaDoDia visita={visita} />
+                          <VisitaDoDia key={visita.id} visita={visita} />
                         </div>
                       ))}
                     </div>

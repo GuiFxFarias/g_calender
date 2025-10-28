@@ -65,16 +65,16 @@ export default function ComponenteLayout({ children }: ComponenteLayoutProps) {
           {!isCollapsed && 'Calendário'}
         </Button>
       </Link>
-      <Link href='/dashboard' onClick={closeDrawer}>
-        <Button variant='ghost' className='w-full justify-start gap-2'>
-          <BarChartIcon size={20} />
-          {!isCollapsed && 'Dashboard'}
-        </Button>
-      </Link>
       <Link href='/clientes' onClick={closeDrawer}>
         <Button variant='ghost' className='w-full justify-start gap-2'>
           <UsersIcon size={20} />
           {!isCollapsed && 'Clientes'}
+        </Button>
+      </Link>
+      <Link href='/dashboard' onClick={closeDrawer}>
+        <Button variant='ghost' className='w-full justify-start gap-2'>
+          <BarChartIcon size={20} />
+          {!isCollapsed && 'Dashboard'}
         </Button>
       </Link>
       <Link href='/mensagens-programadas' onClick={closeDrawer}>

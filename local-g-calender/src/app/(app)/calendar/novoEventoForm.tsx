@@ -43,15 +43,29 @@ import { apiListarTags } from './api/apiListarTags';
 import { apiVincularTags } from './api/apiVincularTags';
 import { apiCriarTag } from './api/apiCriarTag';
 import TagSelector from '@/components/tagSelector';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
-const formSchema = z.object({
-  cliente_id: z.coerce.number().min(0, 'Selecione o cliente').optional(),
+const FREQS = ['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'] as const;
+const ENDINGS = ['NEVER', 'UNTIL', 'COUNT'] as const;
+const WEEK_DAYS = ['0', '1', '2', '3', '4', '5', '6'] as const;
+
+const recorrenciaSchema = z.object({
+  freq: z.enum(FREQS),
+  intervalo: z.number().int().min(1).default(1).optional(),
+  dias_semana: z.array(z.enum(WEEK_DAYS)).optional(),
+  fim_tipo: z.enum(ENDINGS).default('NEVER').optional(),
+  fim_data: z.string().optional().nullable(),
+  fim_qtd: z.number().int().min(1).optional().nullable(),
+});
+
+export const formSchema = z.object({
+  cliente_id: z.coerce.number(),
   nome_cliente: z.string().optional(),
   telefone: z.string().optional(),
   data_visita: z.string().min(1),
   hora_visita: z.string().min(1),
-  preco: z.coerce.number().min(0),
-  descricao: z.string().min(3),
+  preco: z.coerce.number(),
+  descricao: z.string().min(1),
   status: z.enum([
     'pendente_visita',
     'pendente_recebimento',
@@ -59,7 +73,20 @@ const formSchema = z.object({
     'cancelado',
   ]),
   anexos: z.any().optional(),
+  recorrente: z.boolean(),
+  recorrencia: recorrenciaSchema.optional().nullable(),
 });
+
+export type Freq = (typeof FREQS)[number];
+export type Ending = (typeof ENDINGS)[number];
+export type WeekDay = (typeof WEEK_DAYS)[number];
+
+const isFreq = (v: string): v is Freq =>
+  (FREQS as readonly string[]).includes(v);
+const isEnding = (v: string): v is Ending =>
+  (ENDINGS as readonly string[]).includes(v);
+const isWeekDayArray = (arr: string[]): arr is WeekDay[] =>
+  arr.every((d) => WEEK_DAYS.includes(d as WeekDay));
 
 type FormValues = z.infer<typeof formSchema>;
 
@@ -95,6 +122,9 @@ export default function EventoForm() {
       preco: 0,
       descricao: '',
       status: 'pendente_visita',
+      // novos:
+      recorrente: false,
+      recorrencia: null,
     },
   });
 
@@ -117,17 +147,22 @@ export default function EventoForm() {
     }
 
     try {
-      const visitaId = await apiCriarVisitaComAnexo({
+      const corpo = {
         cliente_id: clienteIdFinal,
-        data_visita: `${values.data_visita}T${values.hora_visita}`,
+        data_visita: `${values.data_visita}T${values.hora_visita}`, // backend já soma +3h
         preco: values.preco,
         descricao: values.descricao,
         status: values.status,
         anexos: values.anexos,
-      });
+        ...(values.recorrente && values.recorrencia
+          ? { recorrencia: values.recorrencia }
+          : {}),
+      };
 
+      const visitaId = await apiCriarVisitaComAnexo(corpo);
+
+      // tags (seu fluxo atual)
       let novaTagId: number | null = null;
-
       if (novaTag.trim() !== '') {
         try {
           novaTagId = await apiCriarTag(novaTag.trim());
@@ -140,14 +175,13 @@ export default function EventoForm() {
         ...tagsSelecionadas,
         ...(novaTagId ? [novaTagId] : []),
       ];
-
       if (todasTags.length > 0) {
         await apiVincularTags(visitaId, todasTags);
       }
 
       toast.success('Evento criado com sucesso!');
       setTimeout(
-        () => toast.success('Entre no envento e programe sua mensagem!'),
+        () => toast.success('Entre no evento e programe sua mensagem!'),
         2000
       );
       form.reset();
@@ -332,6 +366,184 @@ export default function EventoForm() {
             )}
           />
         </div>
+
+        {/* ====== RECORRÊNCIA (shadcn) ====== */}
+        <FormField
+          control={form.control}
+          name='recorrente'
+          render={({ field }) => (
+            <FormItem className='mt-2'>
+              <div className='flex items-center gap-2'>
+                <Checkbox
+                  checked={!!field.value}
+                  onCheckedChange={(v) => {
+                    const on = !!v;
+                    field.onChange(on);
+                    form.setValue(
+                      'recorrencia',
+                      on
+                        ? {
+                            freq: 'WEEKLY',
+                            intervalo: 1,
+                            dias_semana: ['1'],
+                            fim_tipo: 'NEVER',
+                          }
+                        : null
+                    );
+                  }}
+                />
+                <FormLabel>Repetir</FormLabel>
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {form.watch('recorrente') && (
+          <div className=''>
+            {/* Frequência */}
+            <div className='space-y-1'>
+              <FormLabel>Frequência</FormLabel>
+              <Select
+                value={form.watch('recorrencia')?.freq ?? 'WEEKLY'}
+                onValueChange={(val) => {
+                  if (isFreq(val)) form.setValue('recorrencia.freq', val); // val: Freq
+                }}
+              >
+                <SelectTrigger className='w-full'>
+                  <SelectValue placeholder='Selecione' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='DAILY'>Diária</SelectItem>
+                  <SelectItem value='WEEKLY'>Semanal</SelectItem>
+                  <SelectItem value='MONTHLY'>Mensal</SelectItem>
+                  <SelectItem value='YEARLY'>Anual</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Intervalo */}
+            <div className='space-y-1'>
+              <FormLabel>Intervalo</FormLabel>
+              <Input
+                type='number'
+                min={1}
+                value={form.watch('recorrencia')?.intervalo ?? 1}
+                onChange={(e) =>
+                  form.setValue(
+                    'recorrencia.intervalo',
+                    Math.max(1, Number(e.target.value) || 1)
+                  )
+                }
+              />
+              <p className='text-xs text-muted-foreground'>
+                1 = toda semana, 2 = a cada 2 semanas
+              </p>
+            </div>
+
+            {/* Término */}
+            <div className='space-y-1'>
+              <FormLabel>Término</FormLabel>
+              <Select
+                value={form.watch('recorrencia')?.fim_tipo ?? 'NEVER'}
+                onValueChange={(val) => {
+                  if (isEnding(val)) form.setValue('recorrencia.fim_tipo', val); // val: Ending
+                }}
+              >
+                <SelectTrigger className='w-full'>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='NEVER'>Nunca</SelectItem>
+                  <SelectItem value='UNTIL'>Até uma data</SelectItem>
+                  <SelectItem value='COUNT'>Após X ocorrências</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Dias da semana (se semanal) */}
+            {form.watch('recorrencia')?.freq === 'WEEKLY' && (
+              <div className='flex flex-wrap'>
+                <FormLabel className='mt-2'>Dias da semana</FormLabel>
+                <ToggleGroup
+                  className='flex flex-wrap mt-2'
+                  type='multiple'
+                  value={form.watch('recorrencia')?.dias_semana ?? []}
+                  onValueChange={(values) => {
+                    const v = (values ?? []) as string[];
+                    if (isWeekDayArray(v))
+                      form.setValue('recorrencia.dias_semana', v); // v: WeekDay[]
+                  }}
+                >
+                  {[
+                    ['0', 'Dom'],
+                    ['1', 'Seg'],
+                    ['2', 'Ter'],
+                    ['3', 'Qua'],
+                    ['4', 'Qui'],
+                    ['5', 'Sex'],
+                    ['6', 'Sáb'],
+                  ].map(([val, lab]) => (
+                    <ToggleGroupItem
+                      key={val}
+                      value={val}
+                      className='data-[state=on]:bg-foreground data-[state=on]:text-background px-3 py-1 rounded-md'
+                    >
+                      {lab}
+                    </ToggleGroupItem>
+                  ))}
+                </ToggleGroup>
+              </div>
+            )}
+
+            {/* UNTIL */}
+            {form.watch('recorrencia')?.fim_tipo === 'UNTIL' && (
+              <div className='space-y-1 mt-2'>
+                <FormLabel>Data final</FormLabel>
+                <Input
+                  className='w-full'
+                  type='date'
+                  value={
+                    form.watch('recorrencia')?.fim_data
+                      ? new Date(form.watch('recorrencia')!.fim_data!)
+                          .toISOString()
+                          .slice(0, 16)
+                      : ''
+                  }
+                  onChange={(e) =>
+                    form.setValue(
+                      'recorrencia.fim_data',
+                      e.target.value
+                        ? new Date(e.target.value).toISOString()
+                        : null
+                    )
+                  }
+                />
+              </div>
+            )}
+
+            {/* COUNT */}
+            {form.watch('recorrencia')?.fim_tipo === 'COUNT' && (
+              <div className='space-y-1'>
+                <FormLabel>Quantidade</FormLabel>
+                <Input
+                  type='number'
+                  min={1}
+                  value={form.watch('recorrencia')?.fim_qtd ?? ''}
+                  onChange={(e) =>
+                    form.setValue(
+                      'recorrencia.fim_qtd',
+                      e.target.value
+                        ? Math.max(1, Number(e.target.value))
+                        : null
+                    )
+                  }
+                />
+              </div>
+            )}
+          </div>
+        )}
+        {/* ====== /RECORRÊNCIA ====== */}
 
         {dataSelecionada && (
           <div className='mt-2 flex flex-col w-full'>

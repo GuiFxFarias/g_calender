@@ -71,7 +71,7 @@ export default function FormAgendarMensagem() {
     } else {
       setTelefone('');
     }
-  }, [form.watch('cliente_id'), clientes]);
+  }, [clientes, form]);
 
   const { mutate: criarMensagem } = useMutation({
     mutationFn: apiCriarMensagemProgramada,

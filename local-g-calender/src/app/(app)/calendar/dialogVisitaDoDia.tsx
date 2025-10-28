@@ -44,7 +44,7 @@ export default function VisitaDoDia({
   return (
     <Dialog key={visita.id}>
       <DialogTrigger asChild>
-        <li className='border border-zinc-200 rounded-md p-3 hover:shadow-md transition cursor-pointer'>
+        <li className='border list-none border-zinc-200 rounded-md p-3 hover:shadow-md transition cursor-pointer'>
           <div className='flex justify-between items-center gap-2 flex-wrap'>
             <p className='text-sm text-zinc-700'>
               <strong>Horário:</strong>{' '}

@@ -61,10 +61,10 @@ export function EditarClienteDialog({ clienteId }: EditarClienteDialogProps) {
   useEffect(() => {
     if (data) {
       form.reset({
-        nome: data.nome,
-        telefone: data.telefone,
-        endereco: data.endereco || '',
-        email: data.email,
+        nome: data.nome ?? '',
+        telefone: data.telefone ?? '',
+        endereco: data.endereco ?? '',
+        email: data.email ?? '',
       });
     }
   }, [data, form]);

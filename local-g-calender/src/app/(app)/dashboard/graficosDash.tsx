@@ -93,7 +93,7 @@ export default function Dashboard() {
       <div className='px-5 grid grid-cols-1 md:grid-cols-2 gap-2 mb-2'>
         <Card>
           <CardHeader>
-            <CardTitle>Evolução de Visitas por Semana</CardTitle>
+            <CardTitle>Evolução de Eventos por Semana</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width='100%' height={200}>
@@ -141,7 +141,7 @@ export default function Dashboard() {
       <div className='px-5 grid grid-cols-1 md:grid-cols-2 gap-2'>
         <Card>
           <CardHeader>
-            <CardTitle>Visitas Pendentes</CardTitle>
+            <CardTitle>Eventos Pendentes</CardTitle>
             <div className='font-semibold mb-2 text-xl border-b border-black'>
               Total: {visitasPendentes.length}
             </div>
@@ -187,7 +187,7 @@ export default function Dashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Visitas Finalizadas</CardTitle>
+            <CardTitle>Eventos Finalizadas</CardTitle>
             <div className='font-semibold mb-2 text-xl border-b border-black'>
               Total: {visitasFinalizadas.length}
             </div>

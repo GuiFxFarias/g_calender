@@ -45,8 +45,8 @@ export default function ListaClientes() {
     },
   });
 
-  const clientesFiltrados = clientes?.filter((cliente) =>
-    cliente.nome.toLowerCase().includes(filtro.toLowerCase())
+  const clientesFiltrados = (clientes ?? []).filter((cliente) =>
+    (cliente.nome ?? '').toLowerCase().includes(filtro.toLowerCase())
   );
 
   if (isLoading) {
