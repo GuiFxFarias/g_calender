@@ -148,8 +148,8 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className='overflow-y-auto max-h-[35vh]'>
             <ul className='space-y-2'>
-              {visitasPendentes.map((v, i) => (
-                <li key={i} className='text-sm border-b pb-1 relative'>
+              {visitasPendentes.map((v) => (
+                <li key={v.id} className='text-sm border-b pb-1 relative'>
                   <span
                     className={`absolute top-0 right-0 px-2 py-0.5 text-xs rounded-full ${
                       v.status === 'pendente_recebimento'
@@ -194,8 +194,8 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className='overflow-y-auto max-h-[35vh]'>
             <ul className='space-y-2'>
-              {visitasFinalizadas.map((v, i) => (
-                <li key={i} className='text-sm border-b pb-1 relative'>
+              {visitasFinalizadas.map((v) => (
+                <li key={v.id} className='text-sm border-b pb-1 relative'>
                   <span
                     className={`absolute top-0 right-0 px-2 py-0.5 text-xs rounded-full ${
                       v.status === 'pendente_recebimento'

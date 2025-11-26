@@ -50,7 +50,7 @@ const ENDINGS = ['NEVER', 'UNTIL', 'COUNT'] as const;
 const WEEK_DAYS = ['0', '1', '2', '3', '4', '5', '6'] as const;
 
 const recorrenciaSchema = z.object({
-  freq: z.enum(FREQS),
+  freq: z.enum(FREQS).optional(),
   intervalo: z.number().int().min(1).default(1).optional(),
   dias_semana: z.array(z.enum(WEEK_DAYS)).optional(),
   fim_tipo: z.enum(ENDINGS).default('NEVER').optional(),
@@ -149,14 +149,21 @@ export default function EventoForm() {
     try {
       const corpo = {
         cliente_id: clienteIdFinal,
-        data_visita: `${values.data_visita}T${values.hora_visita}`, // backend já soma +3h
+        data_visita: `${values.data_visita}T${values.hora_visita}`,
         preco: values.preco,
         descricao: values.descricao,
         status: values.status,
         anexos: values.anexos,
-        ...(values.recorrente && values.recorrencia
-          ? { recorrencia: values.recorrencia }
-          : {}),
+        ...(values.recorrencia && {
+          recorrencia: {
+            freq: values.recorrencia.freq,
+            intervalo: values.recorrencia.intervalo,
+            dias_semana: values.recorrencia.dias_semana,
+            fim_tipo: values.recorrencia.fim_tipo,
+            fim_data: values.recorrencia.fim_data || undefined,
+            fim_qtd: values.recorrencia.fim_qtd || undefined,
+          },
+        }),
       };
 
       const visitaId = await apiCriarVisitaComAnexo(corpo);
@@ -184,7 +191,7 @@ export default function EventoForm() {
         () => toast.success('Entre no evento e programe sua mensagem!'),
         2000
       );
-      form.reset();
+      // form.reset();
       await queryClient.refetchQueries({ queryKey: ['visitas-mensal'] });
     } catch {
       toast.error('Erro ao criar visita');
@@ -498,28 +505,35 @@ export default function EventoForm() {
 
             {/* UNTIL */}
             {form.watch('recorrencia')?.fim_tipo === 'UNTIL' && (
-              <div className='space-y-1 mt-2'>
-                <FormLabel>Data final</FormLabel>
-                <Input
-                  className='w-full'
-                  type='date'
-                  value={
-                    form.watch('recorrencia')?.fim_data
-                      ? new Date(form.watch('recorrencia')!.fim_data!)
-                          .toISOString()
-                          .slice(0, 16)
-                      : ''
-                  }
-                  onChange={(e) =>
-                    form.setValue(
-                      'recorrencia.fim_data',
-                      e.target.value
-                        ? new Date(e.target.value).toISOString()
-                        : null
-                    )
-                  }
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name='recorrencia.fim_data'
+                render={({ field }) => (
+                  <FormItem className='space-y-1 mt-2'>
+                    <FormLabel>Data final</FormLabel>
+                    <FormControl>
+                      <Input
+                        type='date'
+                        className='w-full'
+                        {...field}
+                        value={
+                          field.value
+                            ? new Date(field.value).toISOString().split('T')[0]
+                            : ''
+                        }
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value
+                              ? new Date(e.target.value).toISOString()
+                              : null
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             )}
 
             {/* COUNT */}
@@ -653,8 +667,8 @@ export default function EventoForm() {
           </div>
 
           <ul className='mt-2 list-disc pl-5 text-sm text-gray-600'>
-            {arquivosSelecionados.map((file, index) => (
-              <li key={index}>{file.name}</li>
+            {arquivosSelecionados.map((file) => (
+              <li key={`${file.name}-${file.size}`}>{file.name}</li>
             ))}
           </ul>
         </div>

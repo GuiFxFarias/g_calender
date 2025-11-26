@@ -3,6 +3,8 @@ import { VisitaComAnexoPayload } from '@/types/VisitaComPayload';
 export async function apiCriarVisitaComAnexo(payload: VisitaComAnexoPayload) {
   const formData = new FormData();
 
+  console.log('Payload na criação da visita:', payload);
+
   formData.append(
     'cliente_id',
     payload.cliente_id ? String(payload.cliente_id) : ''
@@ -11,6 +13,10 @@ export async function apiCriarVisitaComAnexo(payload: VisitaComAnexoPayload) {
   formData.append('preco', String(payload.preco));
   formData.append('descricao', payload.descricao);
   formData.append('status', payload.status);
+
+  if (payload.recorrencia) {
+    formData.append('recorrencia', JSON.stringify(payload.recorrencia));
+  }
 
   if (payload.anexos && payload.anexos.length > 0) {
     Array.from(payload.anexos).forEach((file) => {

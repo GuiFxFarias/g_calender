@@ -236,8 +236,8 @@ export function VisitaDetalhesForm({
             </div>
 
             <ul className='mt-2 list-disc pl-5 text-sm text-gray-600'>
-              {arquivosSelecionados.map((file, index) => (
-                <li key={index}>{file.name}</li>
+              {arquivosSelecionados.map((file) => (
+                <li key={`${file.name}-${file.size}`}>{file.name}</li>
               ))}
             </ul>
 

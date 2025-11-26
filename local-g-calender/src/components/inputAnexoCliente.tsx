@@ -43,8 +43,8 @@ export function InputAnexosCliente({
       {/* Lista dos arquivos adicionados */}
       {arquivosSelecionados.length > 0 && (
         <ul className=' text-sm text-muted-foreground flex '>
-          {arquivosSelecionados.map((file, index) => (
-            <li key={index}>
+          {arquivosSelecionados.map((file) => (
+            <li key={file.name + '-' + file.size + '-' + file.lastModified}>
               <span className='text-blue-400 cursor-pointer'>{file.name}</span>{' '}
               <span className='text-blue-300'> </span>
             </li>

@@ -154,7 +154,7 @@ export default function AgendaMensal() {
 
                       {visitasDoDia.map((visita) => (
                         <div key={visita.id} className='space-y-1'>
-                          <VisitaDoDia key={visita.id} visita={visita} />
+                          <VisitaDoDia visita={visita} />
                         </div>
                       ))}
                     </div>

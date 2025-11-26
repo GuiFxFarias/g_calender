@@ -143,8 +143,8 @@ export default function PagamentoPage() {
                 </p>
 
                 <ul className='mt-4 mb-6 space-y-2 text-sm text-left'>
-                  {plano.recursos.map((r, i) => (
-                    <li key={i}>✔ {r}</li>
+                  {plano.recursos.map((r) => (
+                    <li key={r}>✔ {r}</li>
                   ))}
                 </ul>
               </div>

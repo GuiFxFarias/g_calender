@@ -42,7 +42,7 @@ export default function VisitaDoDia({
   );
 
   return (
-    <Dialog key={visita.id}>
+    <Dialog>
       <DialogTrigger asChild>
         <li className='border list-none border-zinc-200 rounded-md p-3 hover:shadow-md transition cursor-pointer'>
           <div className='flex justify-between items-center gap-2 flex-wrap'>
