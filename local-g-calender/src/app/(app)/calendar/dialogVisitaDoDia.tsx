@@ -16,6 +16,7 @@ import { ClientePayload } from '@/types/Cliente';
 import { apiBuscarClientePorId } from './api/apiBuscaClienteId';
 import toast from 'react-hot-toast';
 import { Label } from '@/components/ui/label';
+import DeletarVisitaDialog from './deletarVisita';
 
 export default function VisitaDoDia({
   visita,
@@ -83,7 +84,9 @@ export default function VisitaDoDia({
 
       <DialogContent className='sm:max-w-md w-[95%]'>
         <DialogHeader>
-          <DialogTitle className='text-lg'>Detalhes da Visita</DialogTitle>
+          <DialogTitle className='text-lg flex justify-between items-center'>
+            Detalhes da Visita <DeletarVisitaDialog visita={visita} />
+          </DialogTitle>
           <DialogDescription className='text-sm text-zinc-500 border-b pb-2'>
             {visita.descricao}
           </DialogDescription>

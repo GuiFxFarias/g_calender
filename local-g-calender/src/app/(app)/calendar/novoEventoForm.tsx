@@ -191,7 +191,7 @@ export default function EventoForm() {
         () => toast.success('Entre no evento e programe sua mensagem!'),
         2000
       );
-      // form.reset();
+      form.reset();
       await queryClient.refetchQueries({ queryKey: ['visitas-mensal'] });
     } catch {
       toast.error('Erro ao criar visita');

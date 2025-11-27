@@ -9,6 +9,8 @@ export type VisitaComAnexoPayload = {
   status: 'pendente_visita' | 'pendente_recebimento' | 'pago' | 'cancelado';
   anexos?: FileList | null;
   tags?: Tag[];
+  is_recorrente?: 0 | 1;
+  tenant_id?: string;
   recorrencia?: {
     freq?: string;
     intervalo?: number;
