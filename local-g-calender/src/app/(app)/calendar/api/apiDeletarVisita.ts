@@ -1,11 +1,19 @@
-export async function apiDeletarVisita(visitaId: number, scope?: 'all') {
+export async function apiDeletarVisita(
+  visitaId: number,
+  scope?: 'single' | 'all',
+  dataInstancia?: string
+) {
   const token = sessionStorage.getItem('token');
 
-  console.log('Deletando visita:', visitaId, 'Escopo:', scope);
+  let url = `${process.env.NEXT_PUBLIC_API_URL}/visita/${visitaId}`;
 
-  const url = scope
-    ? `${process.env.NEXT_PUBLIC_API_URL}/visita/${visitaId}?scope=${scope}`
-    : `${process.env.NEXT_PUBLIC_API_URL}/visita/${visitaId}`;
+  const params = new URLSearchParams();
+  if (scope) params.append('scope', scope);
+  if (dataInstancia) params.append('data_instancia', dataInstancia);
+
+  if (params.toString()) {
+    url += `?${params.toString()}`;
+  }
 
   const response = await fetch(url, {
     method: 'DELETE',

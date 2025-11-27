@@ -1,4 +1,4 @@
-// Exemplo de como usar no componente
+import { useState } from 'react';
 import { apiDeletarVisita } from './api/apiDeletarVisita';
 import { toast } from 'react-hot-toast';
 import {
@@ -15,26 +15,41 @@ import { DialogClose } from '@radix-ui/react-dialog';
 import { Trash } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { VisitaComAnexoPayload } from '@/types/VisitaComPayload';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 export default function DeletarVisitaDialog({
   visita,
 }: {
   visita: VisitaComAnexoPayload;
 }) {
+  const [opcao, setOpcao] = useState<'single' | 'all'>('single');
   const queryClient = useQueryClient();
 
+  // Verificar se é série recorrente ou ocorrência virtual
+  const idReal = visita.id!.toString().split('-')[0];
+  const isSerieRecorrente = visita.is_recorrente === 1 || idReal;
+
   const deletarMutation = useMutation({
-    mutationFn: ({ visitaId, scope }: { visitaId: number; scope?: 'all' }) =>
-      apiDeletarVisita(visitaId, scope),
+    mutationFn: ({
+      visitaId,
+      scope,
+      dataInstancia,
+    }: {
+      visitaId: number;
+      scope?: 'single' | 'all';
+      dataInstancia?: string;
+    }) => apiDeletarVisita(visitaId, scope, dataInstancia),
     onSuccess: (data, variables) => {
-      // Invalidar queries para recarregar a lista
       queryClient.invalidateQueries({ queryKey: ['visitas'] });
 
-      // Toast de sucesso
       const mensagem =
         variables.scope === 'all'
           ? 'Série deletada com sucesso!'
+          : variables.scope === 'single'
+          ? 'Ocorrência excluída com sucesso!'
           : 'Visita deletada com sucesso!';
+
       toast.success(mensagem);
     },
     onError: (error: Error) => {
@@ -45,27 +60,65 @@ export default function DeletarVisitaDialog({
   function handleDeletar() {
     const idReal = visita.id!.toString().split('-')[0];
 
-    const scope = visita.is_recorrente === 1 ? 'all' : undefined;
-
-    deletarMutation.mutate({ visitaId: parseInt(idReal), scope });
+    if (isSerieRecorrente) {
+      // Para séries: usar a opção selecionada
+      const dataInstancia = opcao === 'single' ? visita.data_visita : undefined;
+      deletarMutation.mutate({
+        visitaId: parseInt(idReal),
+        scope: opcao,
+        dataInstancia,
+      });
+    } else {
+      // Para visitas normais: deletar direto
+      deletarMutation.mutate({ visitaId: parseInt(idReal) });
+    }
   }
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Trash className='mr-2 h-4 w-4 cursor-pointer' />
+        <Trash className='mr-2 h-4 w-4 cursor-pointer hover:text-red-600' />
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {visita.recorrencia ? 'Deletar série completa?' : 'Deletar visita?'}
+            {isSerieRecorrente
+              ? 'Deletar evento recorrente'
+              : 'Deletar visita?'}
           </DialogTitle>
           <DialogDescription>
-            {visita.recorrencia
-              ? 'Isso vai deletar TODAS as ocorrências desta série. Esta ação não pode ser desfeita.'
+            {isSerieRecorrente
+              ? 'Escolha como deseja deletar este evento:'
               : 'Esta ação não pode ser desfeita.'}
           </DialogDescription>
         </DialogHeader>
+
+        {isSerieRecorrente && (
+          <RadioGroup
+            value={opcao}
+            onValueChange={(v) => setOpcao(v as 'single' | 'all')}
+          >
+            <div className='flex items-center space-x-2 p-3 border rounded hover:bg-gray-50 dark:hover:bg-gray-800'>
+              <RadioGroupItem value='single' id='single' />
+              <Label htmlFor='single' className='flex-1 cursor-pointer'>
+                <div className='font-medium'>Apenas esta ocorrência</div>
+                <div className='text-sm text-muted-foreground'>
+                  Remove apenas este evento específico
+                </div>
+              </Label>
+            </div>
+            <div className='flex items-center space-x-2 p-3 border rounded hover:bg-gray-50 dark:hover:bg-gray-800'>
+              <RadioGroupItem value='all' id='all' />
+              <Label htmlFor='all' className='flex-1 cursor-pointer'>
+                <div className='font-medium'>Toda a série</div>
+                <div className='text-sm text-muted-foreground'>
+                  Remove todos os eventos desta série
+                </div>
+              </Label>
+            </div>
+          </RadioGroup>
+        )}
+
         <DialogFooter>
           <DialogClose asChild>
             <Button variant='outline' disabled={deletarMutation.isPending}>
